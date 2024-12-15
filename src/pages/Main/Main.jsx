@@ -8,6 +8,7 @@ import Skeleton from '../../components/Skeleton/Skeleton';
 import Pagination from '../../components/Pagination/Pagination';
 import styles from './styles.module.css';
 import Categories from '../../components/Categories/Categories';
+import { PAGE_SIZE, TOTAL_PAGES } from '../../constants/constants';
 
 
 const Main = () => {
@@ -17,15 +18,13 @@ const Main = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('ALL');
-    const totalPages = 10;
-    const pageSize = 10;
 
     const fetchNews = async (currentPage) => {
         try {
             setIsLoading(true);
             const response = await getNews({
                 page_number: currentPage,
-                page_size: pageSize,
+                page_size: PAGE_SIZE,
                 category: selectedCategory === 'ALL' ? null : selectedCategory
             });
             setNews(response.news.filter(item => item.image.length >= 5));
@@ -54,7 +53,7 @@ const Main = () => {
     }, [currentPage, selectedCategory])
 
     const handleNextPage = () => {
-        if(currentPage < totalPages) {
+        if(currentPage < TOTAL_PAGES) {
             setCurrentPage(currentPage + 1);
         }
     }
@@ -84,7 +83,7 @@ const Main = () => {
             )}
 
             <Pagination
-                totalPages={totalPages}
+                totalPages={TOTAL_PAGES}
                 handleNextPage={handleNextPage}
                 handlePreviousPage={handlePreviousPage}
                 handlePageClick={handlePageClick}
@@ -97,7 +96,7 @@ const Main = () => {
             )}
 
             <Pagination
-                totalPages={totalPages}
+                totalPages={TOTAL_PAGES}
                 handleNextPage={handleNextPage}
                 handlePreviousPage={handlePreviousPage}
                 handlePageClick={handlePageClick}
