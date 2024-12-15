@@ -8,6 +8,8 @@ import Skeleton from '../../components/Skeleton/Skeleton';
 import Pagination from '../../components/Pagination/Pagination';
 import styles from './styles.module.css';
 import Categories from '../../components/Categories/Categories';
+import Search from '../../components/Search/Search';
+import { useDebounce } from '../../helpers/hooks/useDebounce';
 
 
 const Main = () => {
@@ -16,9 +18,12 @@ const Main = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [categories, setCategories] = useState([]);
+    const [keywords, setKeywords] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('ALL');
     const totalPages = 10;
     const pageSize = 10;
+
+    const debouncedKeywords = useDebounce(keywords, 1500);
 
     const fetchNews = async (currentPage) => {
         try {
@@ -26,7 +31,8 @@ const Main = () => {
             const response = await getNews({
                 page_number: currentPage,
                 page_size: pageSize,
-                category: selectedCategory === 'ALL' ? null : selectedCategory
+                category: selectedCategory === 'ALL' ? null : selectedCategory,
+                keywords: debouncedKeywords
             });
             setNews(response.news.filter(item => item.image.length >= 5));
             setIsLoading(false);
@@ -51,7 +57,7 @@ const Main = () => {
 
     useEffect(() => {
         fetchNews(currentPage);
-    }, [currentPage, selectedCategory])
+    }, [currentPage, selectedCategory, debouncedKeywords])
 
     const handleNextPage = () => {
         if(currentPage < totalPages) {
@@ -69,7 +75,6 @@ const Main = () => {
         setCurrentPage(pageNumber);
     }
 
-
     return (
         <main className={styles.main}>
             <Categories 
@@ -77,6 +82,12 @@ const Main = () => {
             setSelectorCategory={setSelectedCategory}
             selectedCategory={selectedCategory}
             />
+
+            <Search 
+            keywords={keywords}
+            setKeywords={setKeywords}
+            />
+
             {news.length > 0 && !isLoading ? (
                 <NewsBanner item={news[0]} />
             ) : (
