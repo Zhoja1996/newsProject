@@ -18,9 +18,9 @@ export const getNews = async ({
                 category,
                 keywords
             }
-        })
+        })  
 
-        return response.data
+        return response.data;
         
     } catch (error) {
         console.log(error);
