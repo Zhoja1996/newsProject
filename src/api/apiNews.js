@@ -20,7 +20,28 @@ export const getNews = async ({
             }
         })  
 
-        return response.data;
+        const data = response.data;
+        const filteredNews = data.news.filter(item => item.image !== "None");
+
+        return { ...data, news: filteredNews };
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getLatestNews = async (page_number = 1, page_size = 10) => {
+    try {
+        const response = await axios.get(`${BASE_URL}latest-news`, {
+            params: {
+                apiKey: API_KEY,
+            }
+        })
+
+        const data = response.data;
+        const filteredNews = data.news.filter(item => item.image !== "None");
+
+        return { ...data, news: filteredNews };
         
     } catch (error) {
         console.log(error);
@@ -35,7 +56,7 @@ export const getСategories = async (page_number = 1, page_size = 10) => {
             }
         })
 
-        return response.data
+        return response.data;
         
     } catch (error) {
         console.log(error);
