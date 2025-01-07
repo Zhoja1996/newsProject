@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_NEWS_BASE_API_URL;
