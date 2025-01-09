@@ -8,6 +8,11 @@ import {
 const BASE_URL = 'https://api.currentsapi.services/v1/';
 const API_KEY = 'E2_z0og5OSKwwKvFGJ3capfiBPDqmuvm2Gyp2JbaKpbDXIyC';
 
+enum Status {
+  Error = "error",
+  Ok = "ok",
+}
+
 export const getNews = async (
   params?: ParamsType
 ): Promise<NewsApiResponse> => {
@@ -30,7 +35,7 @@ export const getNews = async (
     return response.data;
   } catch (error) {
     console.log(error);
-    return { news: [], page: 1, status: "error" };
+    return { news: [], page: 1, status: Status.Error };
   }
 };
 
