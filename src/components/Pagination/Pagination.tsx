@@ -1,6 +1,7 @@
 import React from "react";
 import { IPaginationProps } from "../../interfaces";
 import styles from "./styles.module.css";
+import { useTheme } from "../../context/ThemeContext";
 
 const Pagination = ({
     totalPages,
@@ -8,8 +9,8 @@ const Pagination = ({
     handleNextPage,
     handlePageClick,
     currentPage,
-    isDarkMode
 }: IPaginationProps) => {
+    const {isDarkMode} = useTheme();
     return (
         <div className={`${styles.pagination} ${isDarkMode ? styles.dark : styles.light}`}>
             <button
