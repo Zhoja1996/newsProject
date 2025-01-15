@@ -12,14 +12,14 @@ interface Props {
     changeFilter: (key: string, value: string | number | null) => void;
 }
 
-const NewsFilters = ({ filters, changeFilter }: Props) => {
+const NewsFilters = ({ filters, changeFilter}: Props) => {
     const { data: dataCategories } = useFetch<CategoriesApiResponse, null>(
         getCategories
     );
     return (
         <div className={styles.filters}>
             {dataCategories ? (
-            <Slider>
+            <Slider >
                 <Categories
                 categories={dataCategories.categories}
                 selectedCategory={filters.category}
