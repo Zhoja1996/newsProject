@@ -3,24 +3,24 @@ import Skeleton from "../ui/Skeleton/Skeleton";
 import { DirectionType, SkeletonType } from "../interfaces";
 
 interface Props {
-  isLoading: boolean;
+    isLoading: boolean;
+    direction?: DirectionType;
+    type?: SkeletonType,
 }
 
 function withSkeleton<P extends object>(
-  Component: React.ComponentType<P>,
-  type?: SkeletonType,
-  count?: number,
-  direction?: DirectionType
+    Component: React.ComponentType<P>,
+    count?: number,
 ) {
-  return function WithSkeleton(props: Props & P) {
-    const { isLoading, ...restProps } = props;
+    return function WithSkeleton(props: Props & P) {
+        const { isLoading, type, direction = 'column', ...restProps } = props;
 
-    if (isLoading) {
-      return <Skeleton type={type} count={count} direction={direction} />;
-    }
+        if (isLoading) {
+        return <Skeleton type={type} count={count} direction={direction} />;
+        }
 
-    return <Component {...(restProps as P)} />;
-  };
+        return <Component type={type} {...(restProps as P)} />;
+    };
 }
 
 export default withSkeleton;

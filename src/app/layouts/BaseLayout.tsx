@@ -1,4 +1,4 @@
-import { MainPage } from "@/pages/main";
+import { MainPage } from "@/pages/news";
 import { useTheme } from "../providers/ThemeProvider";
 import { Header } from "@/widgets/header/ui";
 
