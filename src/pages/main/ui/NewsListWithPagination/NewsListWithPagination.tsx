@@ -4,6 +4,7 @@ import { INews } from "@/entities/news";
 import NewsList from "@/widgets/news/ui/NewsList/NewsList";
 import PaginationWrapper from "@/features/pagination/ui/Pagination/Pagination";
 import { usePaginationNews } from "../../utils/hooks/usePaginationNews";
+import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 
 interface Props {
     filters: IFilters;
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const NewsListWithPagination = ({ filters, news, isLoading }: Props) => {
+
+    const navigateTo = useNavigateWithElement();
 
     const {handleNextPage, handlePreviousPage, handlePageClick} = usePaginationNews(filters);
 
@@ -29,7 +32,10 @@ const NewsListWithPagination = ({ filters, news, isLoading }: Props) => {
                 isLoading={isLoading} 
                 news={news} 
                 type="item" 
-                direction="column" 
+                direction="column"
+                viewNewslot={(news : INews) => (
+                    <p onClick={() => navigateTo(news)}>view more...</p>
+                )} 
             />
 
         </PaginationWrapper>
