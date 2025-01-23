@@ -1,6 +1,11 @@
 .section {
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     width: 100%;
     gap: 32px;
+}
+
+.section p{
+    cursor: pointer;
 }
