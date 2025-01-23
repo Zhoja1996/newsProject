@@ -1,3 +1,4 @@
+import { IMAGE_FAIL } from "@/shared/constants/constants";
 import styles from "./styles.module.css";
 
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
 const Image = ({ image }: Props) => {
 return (
     <div className={styles.wrapper}>
-        {image ? <img src={image} alt="news" className={styles.image} /> : null}
+        {image !='None' ? <img src={image} alt="news" className={styles.image} /> : <img src={IMAGE_FAIL} alt="news" className={styles.image} />}
     </div>
 );
 };
