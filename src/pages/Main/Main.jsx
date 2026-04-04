@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getNews, getСategories } from '../../api/apiNews';
+import { getNews, getCategories } from '../../api/apiNews';
 import { useState } from 'react';
 
 import NewsList from '../../components/NewsList/NewsList';
@@ -44,7 +44,7 @@ const Main = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await getСategories();
+            const response = await getCategories();
             setCategories(["ALL", ...response.categories]);
         } catch (error) {
             console.log(error);
