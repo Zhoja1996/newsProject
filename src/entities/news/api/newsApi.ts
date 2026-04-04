@@ -4,7 +4,7 @@ import { ParamsType } from '@/shared/interfaces';
 import { NewsApiResponse } from '../model/types';
 
 const BASE_URL = 'https://api.currentsapi.services/v1/';
-const API_KEY = 'E2_z0og5OSKwwKvFGJ3capfiBPDqmuvm2Gyp2JbaKpbDXIyC';
+const API_KEY = '02XXuM7rA-S7KfeHgFNdGH3yyoZeA8y11NoPk9v_q2Nrd6da';
 
 export const newsApi = createApi({
     reducerPath: 'newsApi',
