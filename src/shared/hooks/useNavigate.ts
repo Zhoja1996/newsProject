@@ -4,13 +4,13 @@ import { setCurrentNews } from "@/entities/news/model/newsSlice";
 import { useNavigate } from "react-router-dom";
 
 export const useNavigateWithElement = () => {
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-    const navigateTo = (news: INews) => {
-        dispatch(setCurrentNews(news));
-        navigate(`/news/${news.id}`);
-    };
+  const navigateTo = (news: INews) => {
+    dispatch(setCurrentNews(news));
+    navigate(`/news/${news.id}`);
+  };
 
-    return navigateTo;
+  return navigateTo;
 };

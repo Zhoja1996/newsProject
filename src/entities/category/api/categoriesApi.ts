@@ -1,24 +1,35 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CategoriesApiResponse } from "../model/types";
+import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { CategoriesApiResponse, CategoriesType } from "../model/types";
 
-const BASE_URL = 'https://api.currentsapi.services/v1/';
-const API_KEY = 'E2_z0og5OSKwwKvFGJ3capfiBPDqmuvm2Gyp2JbaKpbDXIyC';
+const CATEGORIES: CategoriesType[] = [
+  "general",
+  "world",
+  "politics",
+  "business",
+  "technology",
+  "science",
+  "sports",
+  "entertainment",
+  "health",
+  "finance",
+  "food",
+  "travel",
+];
 
 export const categoriesApi = createApi({
-    reducerPath: 'categoriesApi',
-    baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
-    endpoints: (builder) => ({
-        getCategories: builder.query<CategoriesApiResponse, null>({
-            query: () => {
-                return {
-                    url: 'available/categories',
-                    params: {
-                        apiKey: API_KEY,
-                    },
-                }
-            },
-        }),
+  reducerPath: "categoriesApi",
+  baseQuery: fakeBaseQuery(),
+  endpoints: builder => ({
+    getCategories: builder.query<CategoriesApiResponse, void>({
+      queryFn: () => ({
+        data: {
+          categories: CATEGORIES,
+          description: "Static categories list",
+          status: "ok",
+        },
+      }),
     }),
-})
+  }),
+});
 
 export const { useGetCategoriesQuery } = categoriesApi;
