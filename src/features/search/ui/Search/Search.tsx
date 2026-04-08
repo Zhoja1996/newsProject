@@ -16,8 +16,19 @@ const Search = ({ keywords, setKeywords }: Props) => {
         value={keywords}
         onChange={e => setKeywords(e.target.value)}
         className={styles.input}
-        placeholder="Javascript"
+        placeholder="Search news by keyword..."
       />
+
+      {keywords.trim() ? (
+        <button
+          type="button"
+          onClick={() => setKeywords("")}
+          className={styles.clear}
+          aria-label="Clear search"
+        >
+          ×
+        </button>
+      ) : null}
     </div>
   );
 };

@@ -14,11 +14,13 @@ const Pagination = ({
   children,
   ...paginationProps
 }: Props & IPaginationProps) => {
+  const shouldShowPagination = paginationProps.totalPages > 1;
+
   return (
     <>
-      {top && <PaginationButtons {...paginationProps} />}
+      {top && shouldShowPagination && <PaginationButtons {...paginationProps} />}
       {children}
-      {bottom && <PaginationButtons {...paginationProps} />}
+      {bottom && shouldShowPagination && <PaginationButtons {...paginationProps} />}
     </>
   );
 };

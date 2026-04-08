@@ -42,10 +42,14 @@ export const newsApi = createApi({
         };
       },
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        const result = await queryFulfilled;
-        const data = result.data;
+        try {
+          const result = await queryFulfilled;
+          const data = result.data;
 
-        dispatch(setNews(data.news));
+          dispatch(setNews(data.news));
+        } catch (error) {
+          console.error("Failed to fetch news:", error);
+        }
       },
     }),
 

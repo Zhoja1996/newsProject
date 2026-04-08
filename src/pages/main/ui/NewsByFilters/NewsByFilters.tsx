@@ -6,29 +6,43 @@ import { NewsFilters } from "@/widgets/news";
 import NewsListWithPagination from "../NewsListWithPagination/NewsListWithPagination";
 import styles from "./styles.module.css";
 
+const MAX_VISIBLE_PAGES = 10;
+
 const NewsByFilters = () => {
   const filters = useAppSelector(state => state.news.filters);
-  const news = useAppSelector(state => state.news.news);
   const debouncedKeywords = useDebounce(filters.keywords, 1500);
 
-  const { isLoading } = useGetNewsQuery({
+  const {
+    data: newsResponse,
+    isLoading,
+    isError,
+  } = useGetNewsQuery({
     ...filters,
     keywords: debouncedKeywords,
   });
 
-  const { data } = useGetCategoriesQuery();
+  const { data: categoriesResponse } = useGetCategoriesQuery();
+
+  const news = newsResponse?.news ?? [];
+  const found = newsResponse?.meta?.found ?? 0;
+  const limit = newsResponse?.meta?.limit ?? filters.page_size;
+
+  const calculatedPages = Math.max(1, Math.ceil(found / limit));
+  const totalPages = Math.min(calculatedPages, MAX_VISIBLE_PAGES);
 
   return (
     <section className={styles.section}>
       <NewsFilters
         filters={filters}
-        categories={data?.categories || []}
+        categories={categoriesResponse?.categories || []}
       />
 
       <NewsListWithPagination
         filters={filters}
         news={news}
         isLoading={isLoading}
+        isError={isError}
+        totalPages={totalPages}
       />
     </section>
   );

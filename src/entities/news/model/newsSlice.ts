@@ -35,7 +35,12 @@ export const newsSlice = createSlice({
       action: PayloadAction<{ key: string; value: string | null | number }>
     ) => {
       const { key, value } = action.payload;
+
       state.filters = { ...state.filters, [key]: value };
+
+      if (key === "category" || key === "keywords") {
+        state.filters.page_number = 1;
+      }
     },
   },
 });
