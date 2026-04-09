@@ -3,31 +3,81 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 12px 24px;
-    background-color: #fff;
+    padding: 16px 24px;
+    box-sizing: border-box;
     border-bottom: 1px solid #F2F4F5;
 }
 
 .info {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .dark {
     background-color: #23272f;
     border-bottom: 1px solid rgb(60, 60, 60);
+    color: white;
 }
 
 .light {
     background-color: white;
+    border-bottom: 1px solid #F2F4F5;
+    color: #111;
 }
-
 
 .title {
     font-size: 28px;
+    margin: 0;
+    color: inherit;
 }
 
 .date {
     font-size: 16px;
+    margin: 0;
+    color: inherit;
+    opacity: 0.85;
+}
+
+.logoLink {
+    text-decoration: none;
+    color: inherit;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.authLink {
+    text-decoration: none;
+    color: inherit;
+    font-size: 14px;
+    transition: opacity 0.2s ease;
+}
+
+.authLink:hover {
+    opacity: 0.8;
+}
+
+.authButton {
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    transition: opacity 0.2s ease;
+}
+
+.authButton:hover {
+    opacity: 0.8;
+}
+
+.userEmail {
+    font-size: 14px;
+    color: inherit;
+    opacity: 0.9;
 }

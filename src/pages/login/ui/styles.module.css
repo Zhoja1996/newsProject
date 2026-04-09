@@ -1,0 +1,78 @@
+.wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.card {
+    width: 100%;
+    max-width: 440px;
+    border-radius: 20px;
+    padding: 28px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.light {
+    background: white;
+    color: #111;
+    border: 1px solid #e9ecef;
+}
+
+.dark {
+    background: #23272f;
+    color: white;
+    border: 1px solid rgb(60, 60, 60);
+}
+
+.title {
+    margin: 0;
+    font-size: 32px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.submitButton {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.success {
+    margin: 0;
+    color: green;
+}
+
+.error {
+    margin: 0;
+    color: crimson;
+}
+
+.footerText {
+    margin: 0;
+    font-size: 14px;
+}
+
+.link {
+    color: inherit;
+}
