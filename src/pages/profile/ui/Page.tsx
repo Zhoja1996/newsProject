@@ -60,32 +60,48 @@ const ProfilePage = () => {
   return (
     <main className={styles.wrapper}>
       <section className={`${styles.card} ${isDarkMode ? styles.dark : styles.light}`}>
-        <h1 className={styles.title}>Profile</h1>
+        <div className={styles.hero}>
+        <div className={styles.avatar}>
+  {email ? email[0].toUpperCase() : "U"}
+</div>
+
+          <div className={styles.heroText}>
+            <p className={styles.overline}>Personal account</p>
+            <h1 className={styles.title}>Profile</h1>
+            <p className={styles.subtitle}>
+              Manage your saved news and track what you’ve already read.
+            </p>
+          </div>
+        </div>
 
         <div className={styles.infoBlock}>
-          <span className={styles.label}>You are logged in as</span>
-          <strong className={styles.email}>{email}</strong>
+          <span className={styles.label}>Signed in as</span>
+          <div className={styles.emailBadge}>
+            <strong className={styles.email}>{email}</strong>
+          </div>
         </div>
 
         <div className={styles.stats}>
           <div className={styles.statCard}>
             <span className={styles.statValue}>{favoritesCount}</span>
-            <span className={styles.statLabel}>Favorites</span>
+            <span className={styles.statLabel}>Saved favorites</span>
           </div>
 
           <div className={styles.statCard}>
             <span className={styles.statValue}>{historyCount}</span>
-            <span className={styles.statLabel}>History items</span>
+            <span className={styles.statLabel}>Viewed articles</span>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleLogout}
-          className={styles.logoutButton}
-        >
-          Logout
-        </button>
+        <div className={styles.footerActions}>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className={styles.logoutButton}
+          >
+            Logout
+          </button>
+        </div>
       </section>
     </main>
   );

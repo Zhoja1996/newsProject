@@ -39,7 +39,7 @@ const Header = () => {
 
   return (
     <header className={`${styles.header} ${isDarkMode ? styles.dark : styles.light}`}>
-      <div className={styles.info}>
+      <div className={styles.left}>
         <Link to="/" className={styles.logoLink}>
           <h1 className={styles.title}>NEWS REACTIFY</h1>
         </Link>
@@ -47,44 +47,45 @@ const Header = () => {
         <p className={styles.date}>{formatDate(new Date())}</p>
       </div>
 
-      <div className={styles.actions}>
-            {userEmail ? (
-        <>
-          <Link to="/profile" className={styles.authLink}>
-            Profile
-          </Link>
-
-          <Link to="/favorites" className={styles.authLink}>
-            Favorites
-          </Link>
-
-          <Link to="/history" className={styles.authLink}>
-            History
-          </Link>
-
-          <span className={styles.userEmail}>{userEmail}</span>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            className={styles.authButton}
-          >
-            Logout
-          </button>
-        </>
-      ) : (
+      <div className={styles.right}>
+        {userEmail ? (
           <>
-            <Link to="/login" className={styles.authLink}>
+            <nav className={styles.nav}>
+              <Link to="/profile" className={styles.navLink}>
+                Profile
+              </Link>
+              <Link to="/favorites" className={styles.navLink}>
+                Favorites
+              </Link>
+              <Link to="/history" className={styles.navLink}>
+                History
+              </Link>
+            </nav>
+
+            <span className={styles.userEmail}>{userEmail}</span>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className={styles.logoutButton}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <nav className={styles.nav}>
+            <Link to="/login" className={styles.navLink}>
               Log in
             </Link>
-
-            <Link to="/register" className={styles.authLink}>
+            <Link to="/register" className={styles.navLink}>
               Register
             </Link>
-          </>
+          </nav>
         )}
 
-        <ThemeButton />
+        <div className={styles.themeWrap}>
+          <ThemeButton />
+        </div>
       </div>
     </header>
   );

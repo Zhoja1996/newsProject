@@ -1,4 +1,6 @@
-import { useAppSelector } from "@/app/appStore";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/appStore";
+import { setFilters } from "@/entities/news/model/newsSlice";
 import { useGetNewsQuery } from "@/entities/news/api/newsApi";
 import { useGetCategoriesQuery } from "@/entities/category/api/categoriesApi";
 import { useDebounce } from "@/shared/hooks/useDebounce";
@@ -9,6 +11,7 @@ import styles from "./styles.module.css";
 const MAX_VISIBLE_PAGES = 10;
 
 const NewsByFilters = () => {
+  const dispatch = useAppDispatch();
   const filters = useAppSelector(state => state.news.filters);
   const debouncedKeywords = useDebounce(filters.keywords, 1500);
 
@@ -29,6 +32,12 @@ const NewsByFilters = () => {
 
   const calculatedPages = Math.max(1, Math.ceil(found / limit));
   const totalPages = Math.min(calculatedPages, MAX_VISIBLE_PAGES);
+
+  useEffect(() => {
+    if (!isLoading && filters.page_number > totalPages) {
+      dispatch(setFilters({ key: "page_number", value: totalPages }));
+    }
+  }, [dispatch, filters.page_number, isLoading, totalPages]);
 
   return (
     <section className={styles.section}>

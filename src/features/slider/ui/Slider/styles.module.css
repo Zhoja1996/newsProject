@@ -1,22 +1,51 @@
 .slider {
-    display: flex;
+    position: relative;
     width: 100%;
-    align-items: center;
-    gap: 8px;
+    overflow: hidden;
+    padding: 0 40px;
+    box-sizing: border-box;
 }
 
-.arrow {
-    border: none;
-    background-color: #fff;
-    cursor: pointer;
+.light {
+    background: transparent;
 }
 
-.slider.dark .arrow {
-    background-color: #23272f;
-    color: #f6f7f9;
+.dark {
+    background: transparent;
 }
 
-.slider.light .arrow {
-    background-color: white;
-    color: black;
+.fadeLeft,
+.fadeRight {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 36px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.fadeLeft {
+    left: 0;
+    background: linear-gradient(to right, rgba(35, 39, 47, 1), rgba(35, 39, 47, 0));
+}
+
+.fadeRight {
+    right: 0;
+    background: linear-gradient(to left, rgba(35, 39, 47, 1), rgba(35, 39, 47, 0));
+}
+
+.light .fadeLeft {
+    background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
+.light .fadeRight {
+    background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
+.dark .fadeLeft {
+    background: linear-gradient(to right, rgba(35, 39, 47, 1), rgba(35, 39, 47, 0));
+}
+
+.dark .fadeRight {
+    background: linear-gradient(to left, rgba(35, 39, 47, 1), rgba(35, 39, 47, 0));
 }

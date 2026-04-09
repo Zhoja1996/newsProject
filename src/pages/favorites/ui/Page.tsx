@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { getFavorites, removeFavorite } from "@/shared/api/favoritesApi";
-import { NewsList } from "@/widgets/news";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
-import { INews } from "@/entities/news";
+import { INews, NewsCard } from "@/entities/news";
 import { supabase } from "@/shared/api/supabaseClient";
 import styles from "./styles.module.css";
 
@@ -60,7 +59,12 @@ const FavoritesPage = () => {
     loadPage();
   }, []);
 
-  const handleRemoveFavorite = async (newsId: string) => {
+  const handleRemoveFavorite = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    newsId: string
+  ) => {
+    event.stopPropagation();
+
     try {
       await removeFavorite(newsId);
       setFavorites(prev => prev.filter(item => item.id !== newsId));
@@ -87,27 +91,20 @@ const FavoritesPage = () => {
         ) : favorites.length === 0 && !isFavoritesLoading ? (
           <p className={styles.text}>You have no saved news yet.</p>
         ) : (
-          <NewsList
-            news={favorites}
-            isLoading={isFavoritesLoading}
-            type="item"
-            direction="column"
-            viewNewslot={(news: INews) => (
-              <div className={styles.actions}>
-                <p onClick={() => navigateTo(news)} className={styles.link}>
-                  view more...
-                </p>
-
+          <ul className={styles.list}>
+            {favorites.map(news => (
+              <li key={news.id} className={styles.item}>
+                <NewsCard item={news} type="item" onClick={navigateTo} />
                 <button
                   type="button"
-                  onClick={() => handleRemoveFavorite(news.id)}
+                  onClick={event => handleRemoveFavorite(event, news.id)}
                   className={styles.removeButton}
                 >
                   Remove
                 </button>
-              </div>
-            )}
-          />
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </main>

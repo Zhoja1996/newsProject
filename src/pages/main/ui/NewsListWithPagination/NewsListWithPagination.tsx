@@ -58,9 +58,7 @@ const NewsListWithPagination = ({
         news={news}
         type="item"
         direction="column"
-        viewNewslot={(news: INews) => (
-          <p onClick={() => navigateTo(news)}>view more...</p>
-        )}
+        onItemClick={navigateTo}
       />
     </PaginationWrapper>
   );

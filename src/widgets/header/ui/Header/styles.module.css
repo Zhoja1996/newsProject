@@ -1,83 +1,172 @@
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     width: 100%;
-    padding: 16px 24px;
+    padding: 18px 32px;
     box-sizing: border-box;
-    border-bottom: 1px solid #F2F4F5;
-}
-
-.info {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.18);
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.dark {
-    background-color: #23272f;
-    border-bottom: 1px solid rgb(60, 60, 60);
-    color: white;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    backdrop-filter: blur(8px);
 }
 
 .light {
-    background-color: white;
-    border-bottom: 1px solid #F2F4F5;
+    background: rgba(255, 255, 255, 0.92);
     color: #111;
 }
 
-.title {
-    font-size: 28px;
-    margin: 0;
-    color: inherit;
+.dark {
+    background: rgba(35, 39, 47, 0.92);
+    color: #fff;
 }
 
-.date {
-    font-size: 16px;
-    margin: 0;
-    color: inherit;
-    opacity: 0.85;
+.left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
 }
 
 .logoLink {
     text-decoration: none;
     color: inherit;
+    width: fit-content;
 }
 
-.actions {
+.title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1;
+}
+
+.date {
+    margin: 0;
+    font-size: 15px;
+    opacity: 0.75;
+}
+
+.right {
     display: flex;
     align-items: center;
-    gap: 18px;
+    justify-content: flex-end;
+    gap: 16px;
+    min-width: 0;
     flex-wrap: wrap;
 }
 
-.authLink {
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.navLink {
     text-decoration: none;
     color: inherit;
     font-size: 14px;
-    transition: opacity 0.2s ease;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
-.authLink:hover {
-    opacity: 0.8;
+.light .navLink {
+    background: rgba(17, 17, 17, 0.05);
 }
 
-.authButton {
+.dark .navLink {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.navLink:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.userEmail {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 999px;
+}
+
+.light .userEmail {
+    background: rgba(17, 17, 17, 0.06);
+}
+
+.dark .userEmail {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.logoutButton {
     border: none;
     background: transparent;
     color: inherit;
     cursor: pointer;
     font-size: 14px;
-    padding: 0;
-    transition: opacity 0.2s ease;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 10px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
-.authButton:hover {
-    opacity: 0.8;
+.light .logoutButton:hover {
+    background: rgba(17, 17, 17, 0.06);
 }
 
-.userEmail {
-    font-size: 14px;
-    color: inherit;
-    opacity: 0.9;
+.dark .logoutButton:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.themeWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 4px;
+}
+
+@media (max-width: 900px) {
+    .header {
+        padding: 16px 20px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .userEmail {
+        max-width: 180px;
+    }
+}
+
+@media (max-width: 640px) {
+    .title {
+        font-size: 24px;
+    }
+
+    .date {
+        font-size: 14px;
+    }
+
+    .right {
+        gap: 12px;
+    }
+
+    .nav {
+        gap: 8px;
+    }
+
+    .navLink,
+    .userEmail,
+    .logoutButton {
+        font-size: 13px;
+    }
 }

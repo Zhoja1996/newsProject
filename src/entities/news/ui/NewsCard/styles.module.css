@@ -1,43 +1,120 @@
 .card {
-    display: flex;
     width: 100%;
-    gap: 12px;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.view {
-    color: blue!important;
+.card:hover {
+    transform: translateY(-2px);
 }
 
+.itemCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(128, 128, 128, 0.16);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.itemCard:hover {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    border-color: rgba(128, 128, 128, 0.28);
+}
 
 .banner {
+    display: flex;
     flex-direction: column;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(128, 128, 128, 0.16);
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.view {
-    cursor: pointer;
+.banner:hover {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    border-color: rgba(128, 128, 128, 0.28);
 }
 
-.title {
-    font-size: 14px;
-}
-
-.extra {
-    font-size: 12px;
-    color: #6c7072;
-    cursor: default!important;
+.bannerImage {
+    width: 100%;
 }
 
 .info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.extra {
+    margin: 0;
+    font-size: 13px;
+    color: #8f9599;
+    cursor: default !important;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.actions :global(p) {
+    margin: 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.9;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.actions :global(p:hover) {
+    opacity: 1;
+    transform: translateX(2px);
 }
 
 .wrapper {
-    width: 64px;
-    height: 64px;
+    width: 88px;
+    height: 88px;
+    border-radius: 14px;
     background-color: #f2f4f5;
     background-position: center;
     background-size: cover;
     flex-shrink: 0;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover .title {
+    opacity: 0.95;
+}
+
+@media (max-width: 640px) {
+    .itemCard {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .wrapper {
+        width: 72px;
+        height: 72px;
+    }
+
+    .title {
+        font-size: 16px;
+    }
+    
 }

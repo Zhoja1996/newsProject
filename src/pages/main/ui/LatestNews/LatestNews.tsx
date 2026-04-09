@@ -1,12 +1,10 @@
 import { useGetLatestNewsQuery } from "@/entities/news/api/newsApi";
-import { INews } from "@/entities/news";
 import { NewsList } from "@/widgets/news";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import styles from "./styles.module.css";
 
 const LatestNews = () => {
   const { data, isLoading, isError } = useGetLatestNewsQuery();
-
   const navigateTo = useNavigateWithElement();
 
   if (isError) {
@@ -38,11 +36,7 @@ const LatestNews = () => {
         direction="row"
         news={data?.news ?? []}
         isLoading={isLoading}
-        viewNewslot={(news: INews) => (
-          <p className="view" onClick={() => navigateTo(news)}>
-            view more...
-          </p>
-        )}
+        onItemClick={navigateTo}
       />
     </section>
   );

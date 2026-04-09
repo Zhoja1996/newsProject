@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { getHistory, removeFromHistory } from "@/shared/api/historyApi";
-import { NewsList } from "@/widgets/news";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
-import { INews } from "@/entities/news";
+import { INews, NewsCard } from "@/entities/news";
 import { supabase } from "@/shared/api/supabaseClient";
 import styles from "./styles.module.css";
 
@@ -60,7 +59,12 @@ const HistoryPage = () => {
     loadPage();
   }, []);
 
-  const handleRemove = async (newsId: string) => {
+  const handleRemove = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    newsId: string
+  ) => {
+    event.stopPropagation();
+
     try {
       await removeFromHistory(newsId);
       setHistory(prev => prev.filter(item => item.id !== newsId));
@@ -87,27 +91,20 @@ const HistoryPage = () => {
         ) : history.length === 0 && !isHistoryLoading ? (
           <p className={styles.text}>You have no viewed news yet.</p>
         ) : (
-          <NewsList
-            news={history}
-            isLoading={isHistoryLoading}
-            type="item"
-            direction="column"
-            viewNewslot={(news: INews) => (
-              <div className={styles.actions}>
-                <p onClick={() => navigateTo(news)} className={styles.link}>
-                  view more...
-                </p>
-
+          <ul className={styles.list}>
+            {history.map(news => (
+              <li key={news.id} className={styles.item}>
+                <NewsCard item={news} type="item" onClick={navigateTo} />
                 <button
                   type="button"
-                  onClick={() => handleRemove(news.id)}
+                  onClick={event => handleRemove(event, news.id)}
                   className={styles.removeButton}
                 >
                   Remove
                 </button>
-              </div>
-            )}
-          />
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </main>
