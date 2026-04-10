@@ -2,9 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/appStore";
 import { setFilters } from "@/entities/news/model/newsSlice";
 import { useGetNewsQuery } from "@/entities/news/api/newsApi";
-import { useGetCategoriesQuery } from "@/entities/category/api/categoriesApi";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { NewsFilters } from "@/widgets/news";
 import NewsListWithPagination from "../NewsListWithPagination/NewsListWithPagination";
 import styles from "./styles.module.css";
 
@@ -13,7 +11,7 @@ const MAX_VISIBLE_PAGES = 10;
 const NewsByFilters = () => {
   const dispatch = useAppDispatch();
   const filters = useAppSelector(state => state.news.filters);
-  const debouncedKeywords = useDebounce(filters.keywords, 1500);
+  const debouncedKeywords = useDebounce(filters.keywords, 500);
 
   const {
     data: newsResponse,
@@ -23,8 +21,6 @@ const NewsByFilters = () => {
     ...filters,
     keywords: debouncedKeywords,
   });
-
-  const { data: categoriesResponse } = useGetCategoriesQuery();
 
   const news = newsResponse?.news ?? [];
   const found = newsResponse?.meta?.found ?? 0;
@@ -39,16 +35,17 @@ const NewsByFilters = () => {
     }
   }, [dispatch, filters.page_number, isLoading, totalPages]);
 
+  const heroNews = news[0] ?? null;
+  const featuredNews = news.slice(1, 4);
+  const restNews = news.slice(4);
+
   return (
     <section className={styles.section}>
-      <NewsFilters
-        filters={filters}
-        categories={categoriesResponse?.categories || []}
-      />
-
       <NewsListWithPagination
         filters={filters}
-        news={news}
+        heroNews={heroNews}
+        featuredNews={featuredNews}
+        news={restNews}
         isLoading={isLoading}
         isError={isError}
         totalPages={totalPages}

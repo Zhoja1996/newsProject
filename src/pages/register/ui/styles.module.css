@@ -76,3 +76,15 @@
 .link {
     color: inherit;
 }
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.infoText {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.75;
+}

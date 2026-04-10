@@ -6,6 +6,7 @@ import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
 import { supabase } from "@/shared/api/supabaseClient";
 import styles from "./styles.module.css";
+import PageLoader from "@/shared/ui/PageLoader/PageLoader";
 
 const FavoritesPage = () => {
   const { isDarkMode } = useTheme();
@@ -74,7 +75,7 @@ const FavoritesPage = () => {
   };
 
   if (isLoading) {
-    return <div className={styles.loading}>Loading favorites...</div>;
+    return <PageLoader text="Loading profile..." />;
   }
 
   if (!email) {

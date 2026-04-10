@@ -10,6 +10,7 @@ export const useNavigateWithElement = () => {
 
   const navigateTo = async (news: INews) => {
     dispatch(setCurrentNews(news));
+    localStorage.setItem(`currentNews:${news.id}`, JSON.stringify(news));
 
     try {
       await addToHistory(news);

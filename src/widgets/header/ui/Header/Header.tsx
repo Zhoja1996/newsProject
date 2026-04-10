@@ -9,33 +9,101 @@ import styles from "./styles.module.css";
 const Header = () => {
   const { isDarkMode } = useTheme();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [nickname, setNickname] = useState<string | null>(
+    localStorage.getItem("nickname")
+  );
 
   useEffect(() => {
-    const getUser = async () => {
+    const loadUserData = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      setUserEmail(session?.user?.email ?? null);
+      const email = session?.user?.email ?? null;
+      const userId = session?.user?.id ?? null;
+
+      setUserEmail(email);
+
+      if (!userId) {
+        setNickname(null);
+        localStorage.removeItem("nickname");
+        return;
+      }
+
+      const { data: profileData, error } = await supabase
+        .from("profiles")
+        .select("nickname")
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        console.error("Failed to load nickname:", error);
+        return;
+      }
+
+      const loadedNickname = profileData?.nickname ?? null;
+      setNickname(loadedNickname);
+
+      if (loadedNickname) {
+        localStorage.setItem("nickname", loadedNickname);
+      }
     };
 
-    getUser();
+    loadUserData();
+
+    const syncNickname = () => {
+      setNickname(localStorage.getItem("nickname"));
+    };
+
+    window.addEventListener("nickname-changed", syncNickname);
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserEmail(session?.user?.email ?? null);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const email = session?.user?.email ?? null;
+      const userId = session?.user?.id ?? null;
+
+      setUserEmail(email);
+
+      if (!userId) {
+        setNickname(null);
+        localStorage.removeItem("nickname");
+        return;
+      }
+
+      const { data: profileData, error } = await supabase
+        .from("profiles")
+        .select("nickname")
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        console.error("Failed to load nickname:", error);
+        return;
+      }
+
+      const loadedNickname = profileData?.nickname ?? null;
+      setNickname(loadedNickname);
+
+      if (loadedNickname) {
+        localStorage.setItem("nickname", loadedNickname);
+      }
     });
 
     return () => {
       subscription.unsubscribe();
+      window.removeEventListener("nickname-changed", syncNickname);
     };
   }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUserEmail(null);
+    setNickname(null);
+    localStorage.removeItem("nickname");
   };
+
+  const displayName = nickname || userEmail;
 
   return (
     <header className={`${styles.header} ${isDarkMode ? styles.dark : styles.light}`}>
@@ -62,7 +130,7 @@ const Header = () => {
               </Link>
             </nav>
 
-            <span className={styles.userEmail}>{userEmail}</span>
+            <span className={styles.userEmail}>{displayName}</span>
 
             <button
               type="button"

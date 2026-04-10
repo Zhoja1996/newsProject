@@ -1,0 +1,89 @@
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  
+  .tab {
+    border: none;
+    background: transparent;
+    padding: 12px 18px;
+    border-radius: 999px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #1f1f1f;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  
+  .tab:hover {
+    background: #f3f3f7;
+  }
+  
+  .active {
+    background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+    color: #fff;
+  }
+  
+  .actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 16px;
+  }
+  
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 60px;
+    padding: 0 18px;
+    border: 1px solid #ececf2;
+    border-radius: 20px;
+    background: #fff;
+  }
+  
+  .searchIcon {
+    font-size: 22px;
+    color: #8a8a98;
+    line-height: 1;
+  }
+  
+  .input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+    color: #1f1f1f;
+  }
+  
+  .input::placeholder {
+    color: #a0a0ad;
+  }
+  
+  .select {
+    min-height: 60px;
+    padding: 0 18px;
+    border: 1px solid #ececf2;
+    border-radius: 20px;
+    background: #fff;
+    font-size: 16px;
+    color: #1f1f1f;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 900px) {
+    .actions {
+      grid-template-columns: 1fr;
+    }
+  }

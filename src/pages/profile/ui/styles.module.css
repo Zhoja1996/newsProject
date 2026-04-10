@@ -92,6 +92,13 @@
     opacity: 0.75;
 }
 
+.profileRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .emailBadge {
     width: fit-content;
     max-width: 100%;
@@ -104,6 +111,77 @@
 .email {
     font-size: 16px;
     word-break: break-word;
+}
+
+.editBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 360px;
+}
+
+.nicknameInput {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(128, 128, 128, 0.22);
+    background: transparent;
+    color: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.editActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.secondaryButton,
+.ghostButton,
+.logoutButton {
+    width: fit-content;
+    padding: 12px 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.secondaryButton {
+    border: 1px solid rgba(128, 128, 128, 0.22);
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+}
+
+.ghostButton,
+.logoutButton {
+    border: 1px solid rgba(128, 128, 128, 0.22);
+    background: transparent;
+    color: inherit;
+}
+
+.secondaryButton:hover,
+.ghostButton:hover,
+.logoutButton:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+    border-color: rgba(128, 128, 128, 0.35);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.successText {
+    margin: 0;
+    font-size: 14px;
+    color: #37b26c;
+}
+
+.errorText {
+    margin: 0;
+    font-size: 14px;
+    color: #ff6b6b;
 }
 
 .stats {
@@ -143,26 +221,6 @@
 .footerActions {
     display: flex;
     justify-content: flex-start;
-}
-
-.logoutButton {
-    width: fit-content;
-    padding: 12px 18px;
-    border-radius: 14px;
-    border: 1px solid rgba(128, 128, 128, 0.22);
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.logoutButton:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
-    border-color: rgba(128, 128, 128, 0.35);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
 .loading {

@@ -1,37 +1,45 @@
 import { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAppSelector } from "@/app/appStore";
 import { NewsDetails } from "@/entities/news";
+import type { INews } from "@/entities/news";
 import { useGetNewsQuery } from "@/entities/news/api/newsApi";
 import { NewsList } from "@/widgets/news";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import styles from "./styles.module.css";
 
 const STOP_WORDS = new Set([
-  "the",
-  "a",
-  "an",
-  "and",
-  "or",
-  "but",
-  "to",
-  "of",
-  "in",
-  "on",
-  "for",
-  "with",
-  "at",
-  "by",
-  "from",
-  "is",
-  "are",
-  "was",
-  "were",
+  "the", "a", "an", "and", "or", "but", "to", "of", "in", "on",
+  "for", "with", "at", "by", "from", "is", "are", "was", "were",
 ]);
 
 const NewsPage = () => {
-  const currentNews = useAppSelector(state => state.news.currentNews);
+  const { id } = useParams();
+  const currentNewsFromStore = useAppSelector(state => state.news.currentNews);
   const navigateTo = useNavigateWithElement();
+
+  const currentNews: INews | null = useMemo(() => {
+    if (currentNewsFromStore && currentNewsFromStore.id === id) {
+      return currentNewsFromStore;
+    }
+
+    if (!id) {
+      return null;
+    }
+
+    const savedNews = localStorage.getItem(`currentNews:${id}`);
+
+    if (!savedNews) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedNews) as INews;
+    } catch (error) {
+      console.error("Failed to parse current news from localStorage:", error);
+      return null;
+    }
+  }, [currentNewsFromStore, id]);
 
   const searchQuery = useMemo(() => {
     if (!currentNews?.title) {
