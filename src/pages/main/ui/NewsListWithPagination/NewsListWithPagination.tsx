@@ -73,15 +73,15 @@ const NewsListWithPagination = ({
             )}
 
             <div className={styles.meta}>
-              <span>{heroNews.pubDate || "Recently"}</span>
-              <span>{heroNews.source_id || "Unknown source"}</span>
+              <span>{heroNews.publishedAt || "Recently"}</span>
+              <span>{heroNews.source || "Unknown source"}</span>
             </div>
           </div>
 
-          {heroNews.image_url && (
+          {heroNews.image && (
             <div className={styles.heroImageWrapper}>
               <img
-                src={heroNews.image_url}
+                src={heroNews.image}
                 alt={heroNews.title}
                 className={styles.heroImage}
               />
@@ -94,7 +94,7 @@ const NewsListWithPagination = ({
         <div className={styles.featuredGrid}>
           {featuredNews.map(item => (
             <article
-              key={item.article_id}
+              key={item.id}
               className={styles.card}
               onClick={() => navigateTo(item)}
               role="button"
@@ -105,10 +105,10 @@ const NewsListWithPagination = ({
                 }
               }}
             >
-              {item.image_url && (
+              {item.image && (
                 <div className={styles.cardImageWrapper}>
                   <img
-                    src={item.image_url}
+                    src={item.image}
                     alt={item.title}
                     className={styles.cardImage}
                   />
@@ -119,8 +119,8 @@ const NewsListWithPagination = ({
                 <h3 className={styles.cardTitle}>{item.title}</h3>
 
                 <div className={styles.meta}>
-                  <span>{item.pubDate || "Recently"}</span>
-                  <span>{item.source_id || "Unknown source"}</span>
+                  <span>{item.publishedAt || "Recently"}</span>
+                  <span>{item.source || "Unknown source"}</span>
                 </div>
               </div>
             </article>
@@ -132,7 +132,7 @@ const NewsListWithPagination = ({
         <div className={styles.newsGrid}>
           {news.map(item => (
             <article
-              key={item.article_id}
+              key={item.id}
               className={styles.card}
               onClick={() => navigateTo(item)}
               role="button"
@@ -143,10 +143,10 @@ const NewsListWithPagination = ({
                 }
               }}
             >
-              {item.image_url && (
+              {item.image && (
                 <div className={styles.cardImageWrapper}>
                   <img
-                    src={item.image_url}
+                    src={item.image}
                     alt={item.title}
                     className={styles.cardImage}
                   />
@@ -161,8 +161,8 @@ const NewsListWithPagination = ({
                 )}
 
                 <div className={styles.meta}>
-                  <span>{item.pubDate || "Recently"}</span>
-                  <span>{item.source_id || "Unknown source"}</span>
+                  <span>{item.publishedAt || "Recently"}</span>
+                  <span>{item.source || "Unknown source"}</span>
                 </div>
               </div>
             </article>

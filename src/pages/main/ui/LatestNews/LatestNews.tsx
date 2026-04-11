@@ -1,5 +1,4 @@
 import { useGetLatestNewsQuery } from "@/entities/news/api/newsApi";
-import { NewsList } from "@/widgets/news";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import styles from "./styles.module.css";
 
@@ -9,36 +8,64 @@ const LatestNews = () => {
 
   if (isError) {
     return (
-      <section className={styles.section}>
-        <div className={styles.empty}>
-          <h3>Failed to load latest news</h3>
-          <p>Please try again later.</p>
-        </div>
-      </section>
+      <div className={styles.empty}>
+        <h3>Failed to load latest news</h3>
+        <p>Please try again later.</p>
+      </div>
     );
   }
 
   if (!isLoading && (data?.news?.length ?? 0) === 0) {
     return (
-      <section className={styles.section}>
-        <div className={styles.empty}>
-          <h3>No latest news</h3>
-          <p>There are no latest news available right now.</p>
-        </div>
-      </section>
+      <div className={styles.empty}>
+        <h3>No latest news</h3>
+        <p>There are no latest news available right now.</p>
+      </div>
     );
   }
 
+  const latestNews = data?.news?.slice(0, 5) ?? [];
+
   return (
-    <section className={styles.section}>
-      <NewsList
-        type="banner"
-        direction="row"
-        news={data?.news ?? []}
-        isLoading={isLoading}
-        onItemClick={navigateTo}
-      />
-    </section>
+    <aside className={styles.sidebar}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Latest</h2>
+      </div>
+
+      <div className={styles.list}>
+        {latestNews.map(item => (
+          <article
+            key={item.id}
+            className={styles.item}
+            onClick={() => navigateTo(item)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={event => {
+              if (event.key === "Enter" || event.key === " ") {
+                navigateTo(item);
+              }
+            }}
+          >
+            {item.image && (
+              <img
+                src={item.image}
+                alt={item.title}
+                className={styles.image}
+              />
+            )}
+
+            <div className={styles.content}>
+              <h3 className={styles.itemTitle}>{item.title}</h3>
+
+              <div className={styles.meta}>
+                <span>{item.publishedAt || "Recently"}</span>
+                <span>{item.source || "Unknown source"}</span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </aside>
   );
 };
 
