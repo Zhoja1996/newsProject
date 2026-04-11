@@ -25,15 +25,13 @@ const MainPage = () => {
 
   const isPageLoading = isLatestLoading || isNewsLoading;
 
-  const selectedCategory = filters.category
-    ? filters.category.charAt(0).toUpperCase() + filters.category.slice(1)
-    : "All";
+  const selectedCategory = filters.category ?? "All";
 
   const handleCategoryChange = (category: string) => {
     dispatch(
       setFilters({
         key: "category",
-        value: category === "All" ? null : category.toLowerCase(),
+        value: category === "All" ? null : category,
       })
     );
     dispatch(setFilters({ key: "page_number", value: 1 }));

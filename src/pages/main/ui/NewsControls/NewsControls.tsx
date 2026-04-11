@@ -1,12 +1,17 @@
 import styles from "./styles.module.css";
 
 const categories = [
-  "All",
-  "General",
-  "World",
-  "Politics",
-  "Business",
-  "Technology",
+  { label: "All", value: "All" },
+  { label: "General", value: "general" },
+  { label: "Science", value: "science" },
+  { label: "Sports", value: "sports" },
+  { label: "Business", value: "business" },
+  { label: "Health", value: "health" },
+  { label: "Entertainment", value: "entertainment" },
+  { label: "Tech", value: "tech" },
+  { label: "Politics", value: "politics" },
+  { label: "Food", value: "food" },
+  { label: "Travel", value: "travel" },
 ];
 
 interface Props {
@@ -26,16 +31,16 @@ const NewsControls = ({
     <section className={styles.controls}>
       <div className={styles.tabs}>
         {categories.map(category => {
-          const isActive = category === selectedCategory;
+          const isActive = category.value === selectedCategory;
 
           return (
             <button
-              key={category}
+              key={category.value}
               type="button"
               className={isActive ? `${styles.tab} ${styles.active}` : styles.tab}
-              onClick={() => onCategoryChange(category)}
+              onClick={() => onCategoryChange(category.value)}
             >
-              {category}
+              {category.label}
             </button>
           );
         })}
