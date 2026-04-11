@@ -9,18 +9,14 @@ interface Props {
 }
 
 const Pagination = ({
-  top,
   bottom,
   children,
   ...paginationProps
 }: Props & IPaginationProps) => {
-  const shouldShowPagination = paginationProps.totalPages > 1;
-
   return (
     <>
-      {top && shouldShowPagination && <PaginationButtons {...paginationProps} />}
       {children}
-      {bottom && shouldShowPagination && <PaginationButtons {...paginationProps} />}
+      {bottom && <PaginationButtons {...paginationProps} />}
     </>
   );
 };

@@ -53,8 +53,8 @@ export const newsApi = createApi({
       },
     }),
 
-    getLatestNews: builder.query<NewsApiResponse, void>({
-      query: () => ({
+    getLatestNews: builder.query<NewsApiResponse, string>({
+      query: (sortBy = "published_at") => ({
         url: "top",
         params: {
           page: 1,
@@ -62,6 +62,7 @@ export const newsApi = createApi({
           category: "general",
           locale: "us",
           language: "en",
+          sort: sortBy,
         },
       }),
     }),

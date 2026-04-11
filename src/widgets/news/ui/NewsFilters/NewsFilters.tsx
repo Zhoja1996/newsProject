@@ -24,18 +24,20 @@ const NewsFilters = ({ filters, categories }: Props) => {
           <Categories
             categories={categories}
             selectedCategory={filters.category}
-            setSelectedCategory={category =>
-              dispatch(setFilters({ key: "category", value: category }))
-            }
+            setSelectedCategory={category => {
+              dispatch(setFilters({ key: "category", value: category }));
+              dispatch(setFilters({ key: "page_number", value: 1 }));
+            }}
           />
         </Slider>
       ) : null}
 
       <Search
         keywords={filters.keywords}
-        setKeywords={keywords =>
-          dispatch(setFilters({ key: "keywords", value: keywords }))
-        }
+        setKeywords={keywords => {
+          dispatch(setFilters({ key: "keywords", value: keywords }));
+          dispatch(setFilters({ key: "page_number", value: 1 }));
+        }}
       />
     </div>
   );

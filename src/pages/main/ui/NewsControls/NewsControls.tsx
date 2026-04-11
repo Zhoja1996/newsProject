@@ -9,21 +9,36 @@ const categories = [
   "Technology",
 ];
 
-const NewsControls = () => {
+interface Props {
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+}
+
+const NewsControls = ({
+  selectedCategory,
+  onCategoryChange,
+  searchValue,
+  onSearchChange,
+}: Props) => {
   return (
     <section className={styles.controls}>
       <div className={styles.tabs}>
-        {categories.map(category => (
-          <button
-            key={category}
-            type="button"
-            className={
-              category === "All" ? `${styles.tab} ${styles.active}` : styles.tab
-            }
-          >
-            {category}
-          </button>
-        ))}
+        {categories.map(category => {
+          const isActive = category === selectedCategory;
+
+          return (
+            <button
+              key={category}
+              type="button"
+              className={isActive ? `${styles.tab} ${styles.active}` : styles.tab}
+              onClick={() => onCategoryChange(category)}
+            >
+              {category}
+            </button>
+          );
+        })}
       </div>
 
       <div className={styles.actions}>
@@ -34,14 +49,10 @@ const NewsControls = () => {
             type="text"
             placeholder="Search news..."
             className={styles.input}
+            value={searchValue}
+            onChange={event => onSearchChange(event.target.value)}
           />
         </label>
-
-        <select className={styles.select} defaultValue="latest">
-          <option value="latest">Latest</option>
-          <option value="oldest">Oldest</option>
-          <option value="popular">Popular</option>
-        </select>
       </div>
     </section>
   );

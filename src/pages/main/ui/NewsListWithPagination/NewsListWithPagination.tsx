@@ -1,5 +1,6 @@
 import { IFilters } from "@/shared/interfaces";
 import { INews } from "@/entities/news";
+import NewsList from "@/widgets/news/ui/NewsList/NewsList";
 import PaginationWrapper from "@/features/pagination/ui/Pagination/Pagination";
 import { usePaginationNews } from "../../utils/hooks/usePaginationNews";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
@@ -7,8 +8,6 @@ import styles from "./styles.module.css";
 
 interface Props {
   filters: IFilters;
-  heroNews: INews | null;
-  featuredNews: INews[];
   news: INews[];
   isLoading: boolean;
   isError: boolean;
@@ -17,8 +16,6 @@ interface Props {
 
 const NewsListWithPagination = ({
   filters,
-  heroNews,
-  featuredNews,
   news,
   isLoading,
   isError,
@@ -37,7 +34,7 @@ const NewsListWithPagination = ({
     );
   }
 
-  if (!isLoading && !heroNews && featuredNews.length === 0 && news.length === 0) {
+  if (!isLoading && news.length === 0) {
     return (
       <div className={styles.empty}>
         <h3>Nothing found</h3>
@@ -47,140 +44,23 @@ const NewsListWithPagination = ({
   }
 
   return (
-    <div className={styles.wrapper}>
-      {heroNews && (
-        <article
-          className={styles.hero}
-          onClick={() => navigateTo(heroNews)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={event => {
-            if (event.key === "Enter" || event.key === " ") {
-              navigateTo(heroNews);
-            }
-          }}
-        >
-          <div className={styles.heroContent}>
-            <div className={styles.heroMetaTop}>
-              <span className={styles.badge}>Breaking</span>
-              <span className={styles.metaLabel}>News</span>
-            </div>
-
-            <h2 className={styles.heroTitle}>{heroNews.title}</h2>
-
-            {heroNews.description && (
-              <p className={styles.heroDescription}>{heroNews.description}</p>
-            )}
-
-            <div className={styles.meta}>
-              <span>{heroNews.publishedAt || "Recently"}</span>
-              <span>{heroNews.source || "Unknown source"}</span>
-            </div>
-          </div>
-
-          {heroNews.image && (
-            <div className={styles.heroImageWrapper}>
-              <img
-                src={heroNews.image}
-                alt={heroNews.title}
-                className={styles.heroImage}
-              />
-            </div>
-          )}
-        </article>
-      )}
-
-      {featuredNews.length > 0 && (
-        <div className={styles.featuredGrid}>
-          {featuredNews.map(item => (
-            <article
-              key={item.id}
-              className={styles.card}
-              onClick={() => navigateTo(item)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={event => {
-                if (event.key === "Enter" || event.key === " ") {
-                  navigateTo(item);
-                }
-              }}
-            >
-              {item.image && (
-                <div className={styles.cardImageWrapper}>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className={styles.cardImage}
-                  />
-                </div>
-              )}
-
-              <div className={styles.cardContent}>
-                <h3 className={styles.cardTitle}>{item.title}</h3>
-
-                <div className={styles.meta}>
-                  <span>{item.publishedAt || "Recently"}</span>
-                  <span>{item.source || "Unknown source"}</span>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
-
-      {news.length > 0 && (
-        <div className={styles.newsGrid}>
-          {news.map(item => (
-            <article
-              key={item.id}
-              className={styles.card}
-              onClick={() => navigateTo(item)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={event => {
-                if (event.key === "Enter" || event.key === " ") {
-                  navigateTo(item);
-                }
-              }}
-            >
-              {item.image && (
-                <div className={styles.cardImageWrapper}>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className={styles.cardImage}
-                  />
-                </div>
-              )}
-
-              <div className={styles.cardContent}>
-                <h3 className={styles.cardTitle}>{item.title}</h3>
-
-                {item.description && (
-                  <p className={styles.cardDescription}>{item.description}</p>
-                )}
-
-                <div className={styles.meta}>
-                  <span>{item.publishedAt || "Recently"}</span>
-                  <span>{item.source || "Unknown source"}</span>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
-
-      <PaginationWrapper
-        bottom
-        handlePreviousPage={handlePreviousPage}
-        handleNextPage={handleNextPage}
-        handlePageClick={handlePageClick}
-        totalPages={totalPages}
-        currentPage={filters.page_number}
-      >
-        <div />
-      </PaginationWrapper>
-    </div>
+    <PaginationWrapper
+      top
+      bottom
+      handlePreviousPage={handlePreviousPage}
+      handleNextPage={handleNextPage}
+      handlePageClick={handlePageClick}
+      totalPages={totalPages}
+      currentPage={filters.page_number}
+    >
+      <NewsList
+        isLoading={isLoading}
+        news={news}
+        type="item"
+        direction="column"
+        onItemClick={navigateTo}
+      />
+    </PaginationWrapper>
   );
 };
 

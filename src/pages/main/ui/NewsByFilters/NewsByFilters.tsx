@@ -11,7 +11,7 @@ const MAX_VISIBLE_PAGES = 10;
 const NewsByFilters = () => {
   const dispatch = useAppDispatch();
   const filters = useAppSelector(state => state.news.filters);
-  const debouncedKeywords = useDebounce(filters.keywords, 500);
+  const debouncedKeywords = useDebounce(filters.keywords, 1500);
 
   const {
     data: newsResponse,
@@ -35,17 +35,11 @@ const NewsByFilters = () => {
     }
   }, [dispatch, filters.page_number, isLoading, totalPages]);
 
-  const heroNews = news[0] ?? null;
-  const featuredNews = news.slice(1, 4);
-  const restNews = news.slice(4);
-
   return (
     <section className={styles.section}>
       <NewsListWithPagination
         filters={filters}
-        heroNews={heroNews}
-        featuredNews={featuredNews}
-        news={restNews}
+        news={news}
         isLoading={isLoading}
         isError={isError}
         totalPages={totalPages}

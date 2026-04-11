@@ -6,6 +6,17 @@
     box-sizing: border-box;
 }
 
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
 .container {
     padding: 24px;
     min-height: 100vh;
