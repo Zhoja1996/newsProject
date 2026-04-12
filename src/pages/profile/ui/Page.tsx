@@ -45,6 +45,7 @@ const ProfilePage = () => {
 
         const userId = session?.user?.id ?? null;
         const userEmail = session?.user?.email ?? null;
+        const fallbackCreatedAt = session?.user?.created_at ?? null;
 
         if (!isMounted) return;
 
@@ -72,12 +73,10 @@ const ProfilePage = () => {
 
         setNickname(loadedNickname);
         setDraftNickname(loadedNickname);
-        setCreatedAt(profileData?.created_at ?? session.user.created_at ?? null);
+        setCreatedAt(profileData?.created_at ?? fallbackCreatedAt);
 
-        // Важно: основной экран профиля показываем уже здесь
         setIsLoading(false);
 
-        // Статистику грузим отдельно, чтобы она не держала весь экран
         const [favoritesResult, historyResult] = await Promise.allSettled([
           getFavorites(),
           getHistory(),
