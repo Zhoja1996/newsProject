@@ -4,6 +4,7 @@ import { useTheme } from "@/app/providers/ThemeProvider";
 import { supabase } from "@/shared/api/supabaseClient";
 import { getFavorites } from "@/shared/api/favoritesApi";
 import { getHistory } from "@/shared/api/historyApi";
+import PageLoader from "@/shared/ui/PageLoader/PageLoader";
 import styles from "./styles.module.css";
 
 const formatDate = (value: string | null) => {
@@ -34,35 +35,36 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadProfile = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      const userId = session?.user?.id ?? null;
-      const userEmail = session?.user?.email ?? null;
-
-      setEmail(userEmail);
-
-      if (!userId || !userEmail) {
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        const [{ data: profileData, error: profileError }, favorites, history] =
-          await Promise.all([
-            supabase
-              .from("profiles")
-              .select("nickname, created_at")
-              .eq("id", userId)
-              .single(),
-            getFavorites(),
-            getHistory(),
-          ]);
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        const userId = session?.user?.id ?? null;
+        const userEmail = session?.user?.email ?? null;
+
+        if (!isMounted) return;
+
+        setEmail(userEmail);
+
+        if (!userId || !userEmail) {
+          setIsLoading(false);
+          return;
+        }
+
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("nickname, created_at")
+          .eq("id", userId)
+          .single();
+
+        if (!isMounted) return;
 
         if (profileError) {
-          throw profileError;
+          console.error("Failed to load profile:", profileError);
         }
 
         const loadedNickname =
@@ -70,49 +72,77 @@ const ProfilePage = () => {
 
         setNickname(loadedNickname);
         setDraftNickname(loadedNickname);
-        setCreatedAt(profileData?.created_at ?? null);
-        setFavoritesCount(favorites.length);
-        setHistoryCount(history.length);
+        setCreatedAt(profileData?.created_at ?? session.user.created_at ?? null);
 
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        // Важно: основной экран профиля показываем уже здесь
+        setIsLoading(false);
 
-        const recentViews = history.filter(item => {
-          if (!item.viewed_at) {
-            return false;
-          }
+        // Статистику грузим отдельно, чтобы она не держала весь экран
+        const [favoritesResult, historyResult] = await Promise.allSettled([
+          getFavorites(),
+          getHistory(),
+        ]);
 
-          return new Date(item.viewed_at) >= sevenDaysAgo;
-        });
+        if (!isMounted) return;
 
-        setViewedThisWeek(recentViews.length);
-
-        const sourceMap = new Map<string, number>();
-
-        history.forEach(item => {
-          const source = item.source?.trim();
-
-          if (!source) {
-            return;
-          }
-
-          sourceMap.set(source, (sourceMap.get(source) ?? 0) + 1);
-        });
-
-        if (sourceMap.size > 0) {
-          const [bestSource] = [...sourceMap.entries()].sort((a, b) => b[1] - a[1])[0];
-          setTopSource(bestSource);
+        if (favoritesResult.status === "fulfilled") {
+          setFavoritesCount(favoritesResult.value.length);
         } else {
-          setTopSource("—");
+          console.error("Failed to load favorites:", favoritesResult.reason);
+        }
+
+        if (historyResult.status === "fulfilled") {
+          const history = historyResult.value;
+
+          setHistoryCount(history.length);
+
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+          const recentViews = history.filter(item => {
+            if (!item.viewed_at) {
+              return false;
+            }
+
+            return new Date(item.viewed_at) >= sevenDaysAgo;
+          });
+
+          setViewedThisWeek(recentViews.length);
+
+          const sourceMap = new Map<string, number>();
+
+          history.forEach(item => {
+            const source = item.source?.trim();
+
+            if (!source) {
+              return;
+            }
+
+            sourceMap.set(source, (sourceMap.get(source) ?? 0) + 1);
+          });
+
+          if (sourceMap.size > 0) {
+            const [bestSource] = [...sourceMap.entries()].sort((a, b) => b[1] - a[1])[0];
+            setTopSource(bestSource);
+          } else {
+            setTopSource("—");
+          }
+        } else {
+          console.error("Failed to load history:", historyResult.reason);
         }
       } catch (loadError) {
-        console.error("Failed to load profile stats:", loadError);
-      } finally {
-        setIsLoading(false);
+        console.error("Failed to load profile page:", loadError);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -191,7 +221,7 @@ const ProfilePage = () => {
   }, [nickname, email]);
 
   if (isLoading) {
-    return <div className={styles.loading}>Loading profile...</div>;
+    return <PageLoader text="Loading profile..." />;
   }
 
   if (!email) {
