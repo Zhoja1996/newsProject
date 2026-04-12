@@ -7,4 +7,11 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Supabase environment variables are missing");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: "news-project-auth",
+  },
+});

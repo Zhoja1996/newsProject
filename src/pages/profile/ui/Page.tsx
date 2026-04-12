@@ -141,8 +141,13 @@ const ProfilePage = () => {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setEmail(null);
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem("nickname");
+      setEmail(null);
+    } catch (logoutError) {
+      console.error("Failed to logout:", logoutError);
+    }
   };
 
   const handleStartEdit = () => {

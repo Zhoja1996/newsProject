@@ -97,10 +97,14 @@ const Header = () => {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUserEmail(null);
-    setNickname(null);
-    localStorage.removeItem("nickname");
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem("nickname");
+      setUserEmail(null);
+      setNickname(null);
+    } catch (logoutError) {
+      console.error("Failed to logout:", logoutError);
+    }
   };
 
   const displayName = nickname || userEmail;
