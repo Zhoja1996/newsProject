@@ -1,11 +1,154 @@
-.section {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 100%;
-    gap: 32px;
+.sidebar {
+  width: 100%;
+  border-radius: 28px;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.92);
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100%;
 }
 
-.section p{
-    cursor: pointer;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.06);
+}
+
+.tab {
+  border: none;
+  background: transparent;
+  color: #444;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.tab:hover {
+  transform: translateY(-1px);
+}
+
+.activeTab {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.25);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.item:hover {
+  opacity: 0.92;
+  transform: translateX(2px);
+}
+
+.image,
+.imagePlaceholder {
+  width: 96px;
+  height: 96px;
+  border-radius: 18px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.imagePlaceholder {
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.itemTitle {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty h3,
+.empty p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .image,
+  .imagePlaceholder {
+    width: 82px;
+    height: 82px;
+    border-radius: 16px;
+  }
+
+  .itemTitle {
+    font-size: 16px;
+  }
 }

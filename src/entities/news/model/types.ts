@@ -1,19 +1,22 @@
 import { CategoriesType } from "@/entities/category";
 
 export interface INews {
-    author: string;
-    category: CategoriesType[];
-    description: string;
-    id: string;
-    image: string;
-    language: string;
-    published: string;
-    title: string;
-    url: string;
+  id: string;
+  title: string;
+  description: string;
+  image: string | null;
+  source: string;
+  categories: CategoriesType[];
+  publishedAt: string;
+  url: string;
 }
 
 export interface NewsApiResponse {
-    news: INews[];
+  news: INews[];
+  meta: {
+    found: number;
+    returned: number;
+    limit: number;
     page: number;
-    status: string;
+  };
 }

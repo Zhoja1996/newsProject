@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:vercel": "THENEWSAPI_KEY=ifyGNYyDhXw9Y3LgJYAE7m0LUZbg2LRnnqdkURli vercel dev"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
+    "@supabase/supabase-js": "^2.102.1",
     "@types/react-redux": "^7.1.34",
     "axios": "^1.7.9",
     "react": "^18.3.1",
@@ -23,6 +25,7 @@
     "@types/node": "^22.10.7",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@vercel/node": "^5.7.1",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.17.0",
     "eslint-plugin-import": "^2.31.0",

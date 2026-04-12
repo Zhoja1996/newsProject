@@ -1,0 +1,53 @@
+.wrapper {
+    width: 100%;
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.loaderCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 28px;
+    border-radius: 20px;
+    border: 1px solid rgba(128, 128, 128, 0.18);
+    background: rgba(255, 255, 255, 0.03);
+    min-width: 220px;
+}
+
+.spinner {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 3px solid rgba(128, 128, 128, 0.2);
+    border-top-color: #7c6cff;
+    animation: spin 0.9s linear infinite;
+}
+
+.text {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.light {
+    color: #111;
+}
+
+.dark {
+    color: white;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

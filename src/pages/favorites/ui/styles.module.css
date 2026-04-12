@@ -1,0 +1,79 @@
+.wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.card {
+    width: 100%;
+    max-width: 980px;
+    border-radius: 20px;
+    padding: 28px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.light {
+    background: white;
+    color: #111;
+    border: 1px solid #e9ecef;
+}
+
+.dark {
+    background: #23272f;
+    color: white;
+    border: 1px solid rgb(60, 60, 60);
+}
+
+.title {
+    margin: 0;
+    font-size: 32px;
+}
+
+.text {
+    margin: 0;
+    opacity: 0.8;
+}
+
+.loading {
+    padding: 24px;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.item > :first-child {
+    flex: 1;
+}
+
+.removeButton {
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.8;
+    padding: 0 8px;
+    flex-shrink: 0;
+}
+
+.removeButton:hover {
+    opacity: 1;
+}
