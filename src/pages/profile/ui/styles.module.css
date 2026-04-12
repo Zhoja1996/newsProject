@@ -199,6 +199,7 @@
     border: 1px solid rgba(128, 128, 128, 0.16);
     background: rgba(255, 255, 255, 0.03);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    min-height: 122px;
 }
 
 .statCard:hover {
@@ -213,9 +214,42 @@
     line-height: 1;
 }
 
+.statValueSmall {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
 .statLabel {
     font-size: 14px;
     opacity: 0.75;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.infoPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(128, 128, 128, 0.16);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.infoPanelLabel {
+    font-size: 14px;
+    opacity: 0.72;
+}
+
+.infoPanelValue {
+    font-size: 18px;
+    line-height: 1.35;
 }
 
 .footerActions {

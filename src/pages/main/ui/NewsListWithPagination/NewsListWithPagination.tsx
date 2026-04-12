@@ -4,6 +4,8 @@ import NewsList from "@/widgets/news/ui/NewsList/NewsList";
 import PaginationWrapper from "@/features/pagination/ui/Pagination/Pagination";
 import { usePaginationNews } from "../../utils/hooks/usePaginationNews";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
+import EmptyState from "@/shared/ui/EmptyState/EmptyState";
+import ErrorState from "@/shared/ui/ErrorState/ErrorState";
 import styles from "./styles.module.css";
 
 interface Props {
@@ -27,25 +29,24 @@ const NewsListWithPagination = ({
 
   if (isError) {
     return (
-      <div className={styles.empty}>
-        <h3>Failed to load news</h3>
-        <p>Please try again later.</p>
-      </div>
+      <ErrorState
+        title="Failed to load news"
+        description="Please try again later."
+      />
     );
   }
 
   if (!isLoading && news.length === 0) {
     return (
-      <div className={styles.empty}>
-        <h3>Nothing found</h3>
-        <p>Try another category or search query.</p>
-      </div>
+      <EmptyState
+        title="Nothing found"
+        description="Try another category or search query."
+      />
     );
   }
 
   return (
     <PaginationWrapper
-      top
       bottom
       handlePreviousPage={handlePreviousPage}
       handleNextPage={handleNextPage}

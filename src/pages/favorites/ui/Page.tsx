@@ -5,8 +5,10 @@ import { getFavorites, removeFavorite } from "@/shared/api/favoritesApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
 import { supabase } from "@/shared/api/supabaseClient";
-import styles from "./styles.module.css";
+import EmptyState from "@/shared/ui/EmptyState/EmptyState";
+import ErrorState from "@/shared/ui/ErrorState/ErrorState";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader";
+import styles from "./styles.module.css";
 
 const FavoritesPage = () => {
   const { isDarkMode } = useTheme();
@@ -75,7 +77,7 @@ const FavoritesPage = () => {
   };
 
   if (isLoading) {
-    return <PageLoader text="Loading profile..." />;
+    return <PageLoader text="Loading favorites..." />;
   }
 
   if (!email) {
@@ -88,9 +90,15 @@ const FavoritesPage = () => {
         <h1 className={styles.title}>Favorites</h1>
 
         {isError ? (
-          <p className={styles.text}>Failed to load favorites.</p>
+          <ErrorState
+            title="Failed to load favorites"
+            description="Please try again later."
+          />
         ) : favorites.length === 0 && !isFavoritesLoading ? (
-          <p className={styles.text}>You have no saved news yet.</p>
+          <EmptyState
+            title="No favorites yet"
+            description="Save articles to keep them here."
+          />
         ) : (
           <ul className={styles.list}>
             {favorites.map(news => (

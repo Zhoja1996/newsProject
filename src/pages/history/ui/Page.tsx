@@ -5,8 +5,10 @@ import { getHistory, removeFromHistory } from "@/shared/api/historyApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
 import { supabase } from "@/shared/api/supabaseClient";
-import styles from "./styles.module.css";
+import EmptyState from "@/shared/ui/EmptyState/EmptyState";
+import ErrorState from "@/shared/ui/ErrorState/ErrorState";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader";
+import styles from "./styles.module.css";
 
 const HistoryPage = () => {
   const { isDarkMode } = useTheme();
@@ -75,7 +77,7 @@ const HistoryPage = () => {
   };
 
   if (isLoading) {
-    return <PageLoader text="Loading profile..." />;
+    return <PageLoader text="Loading history..." />;
   }
 
   if (!email) {
@@ -88,9 +90,15 @@ const HistoryPage = () => {
         <h1 className={styles.title}>History</h1>
 
         {isError ? (
-          <p className={styles.text}>Failed to load history.</p>
+          <ErrorState
+            title="Failed to load history"
+            description="Please try again later."
+          />
         ) : history.length === 0 && !isHistoryLoading ? (
-          <p className={styles.text}>You have no viewed news yet.</p>
+          <EmptyState
+            title="No viewed news yet"
+            description="Open a few articles and they will appear here."
+          />
         ) : (
           <ul className={styles.list}>
             {history.map(news => (

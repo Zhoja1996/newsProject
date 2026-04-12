@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useGetLatestNewsQuery } from "@/entities/news/api/newsApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
+import EmptyState from "@/shared/ui/EmptyState/EmptyState";
+import ErrorState from "@/shared/ui/ErrorState/ErrorState";
 import styles from "./styles.module.css";
 
 type FeedMode = "latest" | "popular";
@@ -33,10 +35,10 @@ const LatestNews = () => {
   if (isError) {
     return (
       <aside className={styles.sidebar}>
-        <div className={styles.empty}>
-          <h3>Failed to load news</h3>
-          <p>Please try again later.</p>
-        </div>
+        <ErrorState
+          title="Failed to load news"
+          description="Please try again later."
+        />
       </aside>
     );
   }
@@ -44,10 +46,10 @@ const LatestNews = () => {
   if (!isLoading && displayedNews.length === 0) {
     return (
       <aside className={styles.sidebar}>
-        <div className={styles.empty}>
-          <h3>No news available</h3>
-          <p>Please try again later.</p>
-        </div>
+        <EmptyState
+          title="No news available"
+          description="Please try again later."
+        />
       </aside>
     );
   }

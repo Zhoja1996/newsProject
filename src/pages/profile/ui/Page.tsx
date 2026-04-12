@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { supabase } from "@/shared/api/supabaseClient";
@@ -6,14 +6,27 @@ import { getFavorites } from "@/shared/api/favoritesApi";
 import { getHistory } from "@/shared/api/historyApi";
 import styles from "./styles.module.css";
 
+const formatDate = (value: string | null) => {
+  if (!value) {
+    return "—";
+  }
+
+  return new Date(value).toLocaleDateString();
+};
+
 const ProfilePage = () => {
   const { isDarkMode } = useTheme();
 
   const [email, setEmail] = useState<string | null>(null);
   const [nickname, setNickname] = useState("");
   const [draftNickname, setDraftNickname] = useState("");
+  const [createdAt, setCreatedAt] = useState<string | null>(null);
+
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [historyCount, setHistoryCount] = useState(0);
+  const [viewedThisWeek, setViewedThisWeek] = useState(0);
+  const [topSource, setTopSource] = useState("—");
+
   const [isEditing, setIsEditing] = useState(false);
   const [isSavingNickname, setIsSavingNickname] = useState(false);
   const [message, setMessage] = useState("");
@@ -41,7 +54,7 @@ const ProfilePage = () => {
           await Promise.all([
             supabase
               .from("profiles")
-              .select("nickname")
+              .select("nickname, created_at")
               .eq("id", userId)
               .single(),
             getFavorites(),
@@ -52,10 +65,46 @@ const ProfilePage = () => {
           throw profileError;
         }
 
-        setNickname(profileData?.nickname ?? "");
-        setDraftNickname(profileData?.nickname ?? "");
+        const loadedNickname =
+          profileData?.nickname ?? localStorage.getItem("nickname") ?? "";
+
+        setNickname(loadedNickname);
+        setDraftNickname(loadedNickname);
+        setCreatedAt(profileData?.created_at ?? null);
         setFavoritesCount(favorites.length);
         setHistoryCount(history.length);
+
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const recentViews = history.filter(item => {
+          if (!item.viewed_at) {
+            return false;
+          }
+
+          return new Date(item.viewed_at) >= sevenDaysAgo;
+        });
+
+        setViewedThisWeek(recentViews.length);
+
+        const sourceMap = new Map<string, number>();
+
+        history.forEach(item => {
+          const source = item.source?.trim();
+
+          if (!source) {
+            return;
+          }
+
+          sourceMap.set(source, (sourceMap.get(source) ?? 0) + 1);
+        });
+
+        if (sourceMap.size > 0) {
+          const [bestSource] = [...sourceMap.entries()].sort((a, b) => b[1] - a[1])[0];
+          setTopSource(bestSource);
+        } else {
+          setTopSource("—");
+        }
       } catch (loadError) {
         console.error("Failed to load profile stats:", loadError);
       } finally {
@@ -88,45 +137,43 @@ const ProfilePage = () => {
   const handleSaveNickname = async () => {
     setError("");
     setMessage("");
-  
+
     const trimmedNickname = draftNickname.trim();
-  
+
     if (trimmedNickname.length < 3) {
       setError("Nickname must be at least 3 characters long.");
       return;
     }
-  
+
     try {
       setIsSavingNickname(true);
-  
+
       const {
         data: { session },
       } = await supabase.auth.getSession();
-  
+
       const userId = session?.user?.id;
       const userEmail = session?.user?.email;
-  
+
       if (!userId || !userEmail) {
         setError("User is not authenticated.");
         return;
       }
-  
-      const { error: upsertError } = await supabase
-        .from("profiles")
-        .upsert({
-          id: userId,
-          email: userEmail,
-          nickname: trimmedNickname,
-        });
-  
+
+      const { error: upsertError } = await supabase.from("profiles").upsert({
+        id: userId,
+        email: userEmail,
+        nickname: trimmedNickname,
+      });
+
       if (upsertError) {
         setError(upsertError.message);
         return;
       }
-  
+
       localStorage.setItem("nickname", trimmedNickname);
       window.dispatchEvent(new Event("nickname-changed"));
-  
+
       setNickname(trimmedNickname);
       setDraftNickname(trimmedNickname);
       setIsEditing(false);
@@ -138,6 +185,10 @@ const ProfilePage = () => {
       setIsSavingNickname(false);
     }
   };
+
+  const avatarLetter = useMemo(() => {
+    return (nickname || email || "U")[0].toUpperCase();
+  }, [nickname, email]);
 
   if (isLoading) {
     return <div className={styles.loading}>Loading profile...</div>;
@@ -151,15 +202,13 @@ const ProfilePage = () => {
     <main className={styles.wrapper}>
       <section className={`${styles.card} ${isDarkMode ? styles.dark : styles.light}`}>
         <div className={styles.hero}>
-          <div className={styles.avatar}>
-            {(nickname || email)[0].toUpperCase()}
-          </div>
+          <div className={styles.avatar}>{avatarLetter}</div>
 
           <div className={styles.heroText}>
             <p className={styles.overline}>Personal account</p>
             <h1 className={styles.title}>Profile</h1>
             <p className={styles.subtitle}>
-              Manage your saved news and track what you’ve already read.
+              Manage your saved news and track your reading activity.
             </p>
           </div>
         </div>
@@ -232,6 +281,23 @@ const ProfilePage = () => {
           <div className={styles.statCard}>
             <span className={styles.statValue}>{historyCount}</span>
             <span className={styles.statLabel}>Viewed articles</span>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.statValue}>{viewedThisWeek}</span>
+            <span className={styles.statLabel}>Viewed this week</span>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.statValueSmall}>{topSource}</span>
+            <span className={styles.statLabel}>Top source</span>
+          </div>
+        </div>
+
+        <div className={styles.infoGrid}>
+          <div className={styles.infoPanel}>
+            <span className={styles.infoPanelLabel}>Account created</span>
+            <strong className={styles.infoPanelValue}>{formatDate(createdAt)}</strong>
           </div>
         </div>
 
