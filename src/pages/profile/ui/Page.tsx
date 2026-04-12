@@ -37,11 +37,25 @@ const ProfilePage = () => {
   useEffect(() => {
     let isMounted = true;
 
-    const loadProfile = async () => {
+    const forceStopLoading = window.setTimeout(() => {
+      if (isMounted) {
+        console.warn("Profile loading timeout reached");
+        setIsLoading(false);
+      }
+    }, 5000);
+
+    const loadProfileBase = async () => {
       try {
+        const sessionResult = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("Session timeout")), 4000)
+          ),
+        ]);
+
         const {
           data: { session },
-        } = await supabase.auth.getSession();
+        } = sessionResult;
 
         const userId = session?.user?.id ?? null;
         const userEmail = session?.user?.email ?? null;
@@ -56,24 +70,40 @@ const ProfilePage = () => {
           return;
         }
 
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("nickname, created_at")
-          .eq("id", userId)
-          .single();
+        try {
+          const profileResult = await Promise.race([
+            supabase
+              .from("profiles")
+              .select("nickname, created_at")
+              .eq("id", userId)
+              .maybeSingle(),
+            new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error("Profile query timeout")), 4000)
+            ),
+          ]);
 
-        if (!isMounted) return;
+          if (!isMounted) return;
 
-        if (profileError) {
-          console.error("Failed to load profile:", profileError);
+          const { data: profileData, error: profileError } = profileResult;
+
+          if (profileError) {
+            console.error("Failed to load profile:", profileError);
+          }
+
+          const loadedNickname =
+            profileData?.nickname ?? localStorage.getItem("nickname") ?? "";
+
+          setNickname(loadedNickname);
+          setDraftNickname(loadedNickname);
+          setCreatedAt(profileData?.created_at ?? fallbackCreatedAt);
+        } catch (profileError) {
+          console.error("Failed to load profile data:", profileError);
+
+          const fallbackNickname = localStorage.getItem("nickname") ?? "";
+          setNickname(fallbackNickname);
+          setDraftNickname(fallbackNickname);
+          setCreatedAt(fallbackCreatedAt);
         }
-
-        const loadedNickname =
-          profileData?.nickname ?? localStorage.getItem("nickname") ?? "";
-
-        setNickname(loadedNickname);
-        setDraftNickname(loadedNickname);
-        setCreatedAt(profileData?.created_at ?? fallbackCreatedAt);
 
         setIsLoading(false);
 
@@ -123,8 +153,6 @@ const ProfilePage = () => {
           if (sourceMap.size > 0) {
             const [bestSource] = [...sourceMap.entries()].sort((a, b) => b[1] - a[1])[0];
             setTopSource(bestSource);
-          } else {
-            setTopSource("—");
           }
         } else {
           console.error("Failed to load history:", historyResult.reason);
@@ -137,10 +165,11 @@ const ProfilePage = () => {
       }
     };
 
-    loadProfile();
+    loadProfileBase();
 
     return () => {
       isMounted = false;
+      window.clearTimeout(forceStopLoading);
     };
   }, []);
 
