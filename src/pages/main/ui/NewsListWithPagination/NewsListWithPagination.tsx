@@ -6,7 +6,6 @@ import { usePaginationNews } from "../../utils/hooks/usePaginationNews";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import EmptyState from "@/shared/ui/EmptyState/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState/ErrorState";
-import styles from "./styles.module.css";
 
 interface Props {
   filters: IFilters;
