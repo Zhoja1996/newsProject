@@ -4,6 +4,7 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { supabase } from "@/shared/api/supabaseClient";
 import { getFavorites } from "@/shared/api/favoritesApi";
 import { getHistory } from "@/shared/api/historyApi";
+import PageLoader from "@/shared/ui/PageLoader/PageLoader";
 import styles from "./styles.module.css";
 
 const formatDate = (value: string | null) => {
@@ -14,9 +15,46 @@ const formatDate = (value: string | null) => {
   return new Date(value).toLocaleDateString();
 };
 
+const getTopSource = (history: Array<{ source?: string | null }>) => {
+  const sourceMap = new Map<string, number>();
+
+  history.forEach(item => {
+    const source = item.source?.trim();
+
+    if (!source) {
+      return;
+    }
+
+    sourceMap.set(source, (sourceMap.get(source) ?? 0) + 1);
+  });
+
+  if (sourceMap.size === 0) {
+    return "—";
+  }
+
+  return [...sourceMap.entries()].sort((a, b) => b[1] - a[1])[0][0];
+};
+
+const getViewedThisWeek = (history: Array<{ viewed_at?: string | null }>) => {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  return history.filter(item => {
+    if (!item.viewed_at) {
+      return false;
+    }
+
+    return new Date(item.viewed_at) >= sevenDaysAgo;
+  }).length;
+};
+
 const ProfilePage = () => {
   const { isDarkMode } = useTheme();
-  const { session } = useAuth();
+  const { session, isAuthLoading } = useAuth();
+
+  const userId = session?.user?.id ?? null;
+  const email = session?.user?.email ?? null;
+  const fallbackCreatedAt = session?.user?.created_at ?? null;
 
   const [nickname, setNickname] = useState("");
   const [draftNickname, setDraftNickname] = useState("");
@@ -27,29 +65,32 @@ const ProfilePage = () => {
   const [viewedThisWeek, setViewedThisWeek] = useState(0);
   const [topSource, setTopSource] = useState("—");
 
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSavingNickname, setIsSavingNickname] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-
-  const email = session?.user?.email ?? null;
-  const userId = session?.user?.id ?? null;
-  const fallbackCreatedAt = session?.user?.created_at ?? null;
 
   useEffect(() => {
     let isMounted = true;
 
     const loadProfile = async () => {
       if (!userId || !email) {
+        setIsPageLoading(false);
         return;
       }
 
       try {
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("nickname, created_at")
-          .eq("id", userId)
-          .maybeSingle();
+        const [{ data: profileData, error: profileError }, favorites, history] =
+          await Promise.all([
+            supabase
+              .from("profiles")
+              .select("nickname, created_at")
+              .eq("id", userId)
+              .maybeSingle(),
+            getFavorites(userId),
+            getHistory(userId),
+          ]);
 
         if (!isMounted) return;
 
@@ -64,52 +105,16 @@ const ProfilePage = () => {
         setDraftNickname(loadedNickname);
         setCreatedAt(profileData?.created_at ?? fallbackCreatedAt);
 
-        const [favoritesResult, historyResult] = await Promise.allSettled([
-          getFavorites(userId),
-          getHistory(userId),
-        ]);
-
-        if (!isMounted) return;
-
-        if (favoritesResult.status === "fulfilled") {
-          setFavoritesCount(favoritesResult.value.length);
-        }
-
-        if (historyResult.status === "fulfilled") {
-          const history = historyResult.value;
-
-          setHistoryCount(history.length);
-
-          const sevenDaysAgo = new Date();
-          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-          const recentViews = history.filter(item => {
-            if (!item.viewed_at) {
-              return false;
-            }
-
-            return new Date(item.viewed_at) >= sevenDaysAgo;
-          });
-
-          setViewedThisWeek(recentViews.length);
-
-          const sourceMap = new Map<string, number>();
-
-          history.forEach(item => {
-            const source = item.source?.trim();
-            if (!source) return;
-            sourceMap.set(source, (sourceMap.get(source) ?? 0) + 1);
-          });
-
-          if (sourceMap.size > 0) {
-            const [bestSource] = [...sourceMap.entries()].sort((a, b) => b[1] - a[1])[0];
-            setTopSource(bestSource);
-          } else {
-            setTopSource("—");
-          }
-        }
+        setFavoritesCount(favorites.length);
+        setHistoryCount(history.length);
+        setViewedThisWeek(getViewedThisWeek(history));
+        setTopSource(getTopSource(history));
       } catch (loadError) {
         console.error("Failed to load profile page:", loadError);
+      } finally {
+        if (isMounted) {
+          setIsPageLoading(false);
+        }
       }
     };
 
@@ -124,6 +129,7 @@ const ProfilePage = () => {
     try {
       await supabase.auth.signOut({ scope: "local" });
       localStorage.removeItem("nickname");
+      window.location.href = "/login";
     } catch (logoutError) {
       console.error("Failed to logout:", logoutError);
     }
@@ -131,21 +137,21 @@ const ProfilePage = () => {
 
   const handleStartEdit = () => {
     setDraftNickname(nickname);
-    setError("");
     setMessage("");
+    setError("");
     setIsEditing(true);
   };
 
   const handleCancelEdit = () => {
     setDraftNickname(nickname);
-    setError("");
     setMessage("");
+    setError("");
     setIsEditing(false);
   };
 
   const handleSaveNickname = async () => {
-    setError("");
     setMessage("");
+    setError("");
 
     const trimmedNickname = draftNickname.trim();
 
@@ -154,13 +160,13 @@ const ProfilePage = () => {
       return;
     }
 
+    if (!userId || !email) {
+      setError("User is not authenticated.");
+      return;
+    }
+
     try {
       setIsSavingNickname(true);
-
-      if (!userId || !email) {
-        setError("User is not authenticated.");
-        return;
-      }
 
       const { error: upsertError } = await supabase.from("profiles").upsert({
         id: userId,
@@ -191,6 +197,10 @@ const ProfilePage = () => {
   const avatarLetter = useMemo(() => {
     return (nickname || email || "U")[0].toUpperCase();
   }, [nickname, email]);
+
+  if (isAuthLoading || isPageLoading) {
+    return <PageLoader text="Loading profile..." />;
+  }
 
   return (
     <main className={styles.wrapper}>
