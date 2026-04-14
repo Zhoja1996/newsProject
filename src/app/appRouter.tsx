@@ -7,6 +7,7 @@ import RegisterPage from "@/pages/register/ui/Page";
 import ProfilePage from "@/pages/profile/ui/Page";
 import FavoritesPage from "@/pages/favorites/ui/Page";
 import HistoryPage from "@/pages/history/ui/Page";
+import ProtectedRoute from "./providers/ProtectedRoute";
 
 export const appRouter = createBrowserRouter([
   {
@@ -17,9 +18,30 @@ export const appRouter = createBrowserRouter([
       { path: "/news/:id", element: <NewsPage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/register", element: <RegisterPage /> },
-      { path: "/profile", element: <ProfilePage /> },
-      { path: "/favorites", element: <FavoritesPage /> },
-      { path: "/history", element: <HistoryPage /> },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/favorites",
+        element: (
+          <ProtectedRoute>
+            <FavoritesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/history",
+        element: (
+          <ProtectedRoute>
+            <HistoryPage />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

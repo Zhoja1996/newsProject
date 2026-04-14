@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { getFavorites, removeFavorite } from "@/shared/api/favoritesApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
-import { supabase } from "@/shared/api/supabaseClient";
 import EmptyState from "@/shared/ui/EmptyState/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState/ErrorState";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader";
@@ -14,7 +12,6 @@ const FavoritesPage = () => {
   const { isDarkMode } = useTheme();
   const navigateTo = useNavigateWithElement();
 
-  const [email, setEmail] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<INews[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFavoritesLoading, setIsFavoritesLoading] = useState(true);
@@ -23,19 +20,6 @@ const FavoritesPage = () => {
   useEffect(() => {
     const loadPage = async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const userEmail = session?.user?.email ?? null;
-        setEmail(userEmail);
-
-        if (!userEmail) {
-          setIsLoading(false);
-          setIsFavoritesLoading(false);
-          return;
-        }
-
         const favoritesData = await getFavorites();
 
         const mappedFavorites: INews[] = favoritesData.map(item => ({
@@ -78,10 +62,6 @@ const FavoritesPage = () => {
 
   if (isLoading) {
     return <PageLoader text="Loading favorites..." />;
-  }
-
-  if (!email) {
-    return <Navigate to="/login" replace />;
   }
 
   return (

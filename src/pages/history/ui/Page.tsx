@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { getHistory, removeFromHistory } from "@/shared/api/historyApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
-import { supabase } from "@/shared/api/supabaseClient";
 import EmptyState from "@/shared/ui/EmptyState/EmptyState";
 import ErrorState from "@/shared/ui/ErrorState/ErrorState";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader";
@@ -14,7 +12,6 @@ const HistoryPage = () => {
   const { isDarkMode } = useTheme();
   const navigateTo = useNavigateWithElement();
 
-  const [email, setEmail] = useState<string | null>(null);
   const [history, setHistory] = useState<INews[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
@@ -23,19 +20,6 @@ const HistoryPage = () => {
   useEffect(() => {
     const loadPage = async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const userEmail = session?.user?.email ?? null;
-        setEmail(userEmail);
-
-        if (!userEmail) {
-          setIsLoading(false);
-          setIsHistoryLoading(false);
-          return;
-        }
-
         const historyData = await getHistory();
 
         const mappedHistory: INews[] = historyData.map(item => ({
@@ -78,10 +62,6 @@ const HistoryPage = () => {
 
   if (isLoading) {
     return <PageLoader text="Loading history..." />;
-  }
-
-  if (!email) {
-    return <Navigate to="/login" replace />;
   }
 
   return (

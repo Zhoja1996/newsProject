@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { useAuth } from "@/app/providers/AuthProvider";
 import { supabase } from "@/shared/api/supabaseClient";
 import { getFavorites } from "@/shared/api/favoritesApi";
 import { getHistory } from "@/shared/api/historyApi";
-import PageLoader from "@/shared/ui/PageLoader/PageLoader";
 import styles from "./styles.module.css";
 
 const formatDate = (value: string | null) => {
@@ -17,9 +16,8 @@ const formatDate = (value: string | null) => {
 
 const ProfilePage = () => {
   const { isDarkMode } = useTheme();
+  const { session } = useAuth();
 
-  const [authChecked, setAuthChecked] = useState(false);
-  const [email, setEmail] = useState<string | null>(null);
   const [nickname, setNickname] = useState("");
   const [draftNickname, setDraftNickname] = useState("");
   const [createdAt, setCreatedAt] = useState<string | null>(null);
@@ -34,28 +32,19 @@ const ProfilePage = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const email = session?.user?.email ?? null;
+  const userId = session?.user?.id ?? null;
+  const fallbackCreatedAt = session?.user?.created_at ?? null;
+
   useEffect(() => {
     let isMounted = true;
 
     const loadProfile = async () => {
+      if (!userId || !email) {
+        return;
+      }
+
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (!isMounted) return;
-
-        const userId = session?.user?.id ?? null;
-        const userEmail = session?.user?.email ?? null;
-        const fallbackCreatedAt = session?.user?.created_at ?? null;
-
-        setEmail(userEmail);
-        setAuthChecked(true);
-
-        if (!userId || !userEmail) {
-          return;
-        }
-
         const { data: profileData, error: profileError } = await supabase
           .from("profiles")
           .select("nickname, created_at")
@@ -115,36 +104,26 @@ const ProfilePage = () => {
           if (sourceMap.size > 0) {
             const [bestSource] = [...sourceMap.entries()].sort((a, b) => b[1] - a[1])[0];
             setTopSource(bestSource);
+          } else {
+            setTopSource("—");
           }
         }
       } catch (loadError) {
         console.error("Failed to load profile page:", loadError);
-        if (isMounted) {
-          setAuthChecked(true);
-        }
       }
     };
 
     loadProfile();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!isMounted) return;
-      setEmail(session?.user?.email ?? null);
-    });
-
     return () => {
       isMounted = false;
-      subscription.unsubscribe();
     };
-  }, []);
+  }, [userId, email, fallbackCreatedAt]);
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
       localStorage.removeItem("nickname");
-      setEmail(null);
     } catch (logoutError) {
       console.error("Failed to logout:", logoutError);
     }
@@ -178,21 +157,14 @@ const ProfilePage = () => {
     try {
       setIsSavingNickname(true);
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      const userId = session?.user?.id;
-      const userEmail = session?.user?.email;
-
-      if (!userId || !userEmail) {
+      if (!userId || !email) {
         setError("User is not authenticated.");
         return;
       }
 
       const { error: upsertError } = await supabase.from("profiles").upsert({
         id: userId,
-        email: userEmail,
+        email,
         nickname: trimmedNickname,
       });
 
@@ -219,14 +191,6 @@ const ProfilePage = () => {
   const avatarLetter = useMemo(() => {
     return (nickname || email || "U")[0].toUpperCase();
   }, [nickname, email]);
-
-  if (!authChecked) {
-    return <PageLoader text="Loading profile..." />;
-  }
-
-  if (!email) {
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <main className={styles.wrapper}>
