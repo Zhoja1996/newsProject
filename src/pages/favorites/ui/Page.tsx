@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { useAuth } from "@/app/providers/AuthProvider";
 import { getFavorites, removeFavorite } from "@/shared/api/favoritesApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
@@ -10,7 +11,10 @@ import styles from "./styles.module.css";
 
 const FavoritesPage = () => {
   const { isDarkMode } = useTheme();
+  const { session } = useAuth();
   const navigateTo = useNavigateWithElement();
+
+  const userId = session?.user?.id ?? null;
 
   const [favorites, setFavorites] = useState<INews[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,8 +23,14 @@ const FavoritesPage = () => {
 
   useEffect(() => {
     const loadPage = async () => {
+      if (!userId) {
+        setIsLoading(false);
+        setIsFavoritesLoading(false);
+        return;
+      }
+
       try {
-        const favoritesData = await getFavorites();
+        const favoritesData = await getFavorites(userId);
 
         const mappedFavorites: INews[] = favoritesData.map(item => ({
           id: item.news_id,
@@ -44,7 +54,7 @@ const FavoritesPage = () => {
     };
 
     loadPage();
-  }, []);
+  }, [userId]);
 
   const handleRemoveFavorite = async (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -52,8 +62,12 @@ const FavoritesPage = () => {
   ) => {
     event.stopPropagation();
 
+    if (!userId) {
+      return;
+    }
+
     try {
-      await removeFavorite(newsId);
+      await removeFavorite(userId, newsId);
       setFavorites(prev => prev.filter(item => item.id !== newsId));
     } catch (error) {
       console.error("Failed to remove favorite:", error);

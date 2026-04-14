@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { useAuth } from "@/app/providers/AuthProvider";
 import { getHistory, removeFromHistory } from "@/shared/api/historyApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
@@ -10,7 +11,10 @@ import styles from "./styles.module.css";
 
 const HistoryPage = () => {
   const { isDarkMode } = useTheme();
+  const { session } = useAuth();
   const navigateTo = useNavigateWithElement();
+
+  const userId = session?.user?.id ?? null;
 
   const [history, setHistory] = useState<INews[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,8 +23,14 @@ const HistoryPage = () => {
 
   useEffect(() => {
     const loadPage = async () => {
+      if (!userId) {
+        setIsLoading(false);
+        setIsHistoryLoading(false);
+        return;
+      }
+
       try {
-        const historyData = await getHistory();
+        const historyData = await getHistory(userId);
 
         const mappedHistory: INews[] = historyData.map(item => ({
           id: item.news_id,
@@ -44,7 +54,7 @@ const HistoryPage = () => {
     };
 
     loadPage();
-  }, []);
+  }, [userId]);
 
   const handleRemove = async (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -52,8 +62,12 @@ const HistoryPage = () => {
   ) => {
     event.stopPropagation();
 
+    if (!userId) {
+      return;
+    }
+
     try {
-      await removeFromHistory(newsId);
+      await removeFromHistory(userId, newsId);
       setHistory(prev => prev.filter(item => item.id !== newsId));
     } catch (error) {
       console.error("Failed to remove history item:", error);

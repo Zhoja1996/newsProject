@@ -65,8 +65,8 @@ const ProfilePage = () => {
         setCreatedAt(profileData?.created_at ?? fallbackCreatedAt);
 
         const [favoritesResult, historyResult] = await Promise.allSettled([
-          getFavorites(),
-          getHistory(),
+          getFavorites(userId),
+          getHistory(userId),
         ]);
 
         if (!isMounted) return;
@@ -122,7 +122,7 @@ const ProfilePage = () => {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: "local" });
       localStorage.removeItem("nickname");
     } catch (logoutError) {
       console.error("Failed to logout:", logoutError);

@@ -1,21 +1,7 @@
 import { supabase } from "@/shared/api/supabaseClient";
 import { INews } from "@/entities/news";
 
-export const getCurrentUserId = async () => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  return session?.user?.id ?? null;
-};
-
-export const getFavorites = async () => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    return [];
-  }
-
+export const getFavorites = async (userId: string) => {
   const { data, error } = await supabase
     .from("favorites")
     .select("*")
@@ -29,13 +15,7 @@ export const getFavorites = async () => {
   return data ?? [];
 };
 
-export const addFavorite = async (news: INews) => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    throw new Error("User is not authenticated");
-  }
-
+export const addFavorite = async (userId: string, news: INews) => {
   const { error } = await supabase.from("favorites").insert({
     user_id: userId,
     news_id: news.id,
@@ -52,13 +32,7 @@ export const addFavorite = async (news: INews) => {
   }
 };
 
-export const removeFavorite = async (newsId: string) => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    throw new Error("User is not authenticated");
-  }
-
+export const removeFavorite = async (userId: string, newsId: string) => {
   const { error } = await supabase
     .from("favorites")
     .delete()
@@ -70,13 +44,7 @@ export const removeFavorite = async (newsId: string) => {
   }
 };
 
-export const isFavorite = async (newsId: string) => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    return false;
-  }
-
+export const isFavorite = async (userId: string, newsId: string) => {
   const { data, error } = await supabase
     .from("favorites")
     .select("id")

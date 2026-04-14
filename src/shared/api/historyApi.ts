@@ -1,27 +1,17 @@
 import { supabase } from "@/shared/api/supabaseClient";
 import { INews } from "@/entities/news";
 
-const getCurrentUserId = async () => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  return session?.user?.id ?? null;
-};
-
-export const addToHistory = async (news: INews) => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    return;
-  }
-
-  const { data: existing } = await supabase
+export const addToHistory = async (userId: string, news: INews) => {
+  const { data: existing, error: existingError } = await supabase
     .from("view_history")
     .select("id")
     .eq("user_id", userId)
     .eq("news_id", news.id)
     .maybeSingle();
+
+  if (existingError) {
+    throw existingError;
+  }
 
   if (existing?.id) {
     const { error } = await supabase
@@ -60,13 +50,7 @@ export const addToHistory = async (news: INews) => {
   }
 };
 
-export const getHistory = async () => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    return [];
-  }
-
+export const getHistory = async (userId: string) => {
   const { data, error } = await supabase
     .from("view_history")
     .select("*")
@@ -80,13 +64,7 @@ export const getHistory = async () => {
   return data ?? [];
 };
 
-export const removeFromHistory = async (newsId: string) => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    throw new Error("User is not authenticated");
-  }
-
+export const removeFromHistory = async (userId: string, newsId: string) => {
   const { error } = await supabase
     .from("view_history")
     .delete()

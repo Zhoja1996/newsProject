@@ -98,10 +98,8 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: "local" });
       localStorage.removeItem("nickname");
-      setUserEmail(null);
-      setNickname(null);
     } catch (logoutError) {
       console.error("Failed to logout:", logoutError);
     }

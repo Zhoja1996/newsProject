@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { formatTimeAgo } from "@/shared/helpers/formatTimeAgo";
 import { generateSummary } from "@/shared/helpers/generateSummary";
 import { addFavorite, isFavorite, removeFavorite } from "@/shared/api/favoritesApi";
+import { useAuth } from "@/app/providers/AuthProvider";
 import { INews } from "../../model/types";
 import Image from "@/shared/ui/Image/Image";
 import styles from "./styles.module.css";
@@ -11,14 +12,22 @@ interface Props {
 }
 
 const NewsDetails = ({ item }: Props) => {
+  const { session } = useAuth();
+  const userId = session?.user?.id ?? null;
+
   const [favorite, setFavorite] = useState(false);
   const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     const checkFavorite = async () => {
+      if (!userId) {
+        setFavorite(false);
+        return;
+      }
+
       try {
-        const result = await isFavorite(item.id);
+        const result = await isFavorite(userId, item.id);
         setFavorite(result);
       } catch (error) {
         console.error("Failed to check favorite:", error);
@@ -26,25 +35,30 @@ const NewsDetails = ({ item }: Props) => {
     };
 
     checkFavorite();
-  }, [item.id]);
+  }, [item.id, userId]);
 
   const handleToggleFavorite = async () => {
+    if (!userId) {
+      setMessage("You need to log in to save favorites.");
+      return;
+    }
+
     try {
       setIsLoadingFavorite(true);
       setMessage("");
 
       if (favorite) {
-        await removeFavorite(item.id);
+        await removeFavorite(userId, item.id);
         setFavorite(false);
         setMessage("Removed from favorites.");
       } else {
-        await addFavorite(item);
+        await addFavorite(userId, item);
         setFavorite(true);
         setMessage("Saved to favorites.");
       }
     } catch (error) {
       console.error("Failed to update favorites:", error);
-      setMessage("You need to log in to save favorites.");
+      setMessage("Failed to update favorites.");
     } finally {
       setIsLoadingFavorite(false);
     }
