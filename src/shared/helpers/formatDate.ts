@@ -1,9 +1,10 @@
-export const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-};
+export const formatDate = (date: Date, language: "en" | "uk" = "en") => {
+    const locale = language === "uk" ? "uk-UA" : "en-US";
+  
+    return new Intl.DateTimeFormat(locale, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }).format(date);
+  };
