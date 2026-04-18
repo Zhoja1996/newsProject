@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "@/app/providers/AuthProvider";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import { formatTimeAgo } from "@/shared/helpers/formatTimeAgo";
 import { generateSummary } from "@/shared/helpers/generateSummary";
 import { addFavorite, isFavorite, removeFavorite } from "@/shared/api/favoritesApi";
-import { useAuth } from "@/app/providers/AuthProvider";
 import { INews } from "../../model/types";
 import Image from "@/shared/ui/Image/Image";
 import styles from "./styles.module.css";
@@ -13,6 +14,7 @@ interface Props {
 
 const NewsDetails = ({ item }: Props) => {
   const { session } = useAuth();
+  const { t } = useLanguage();
   const userId = session?.user?.id ?? null;
 
   const [favorite, setFavorite] = useState(false);
@@ -39,7 +41,7 @@ const NewsDetails = ({ item }: Props) => {
 
   const handleToggleFavorite = async () => {
     if (!userId) {
-      setMessage("You need to log in to save favorites.");
+      setMessage(t.news.loginToSave);
       return;
     }
 
@@ -50,15 +52,15 @@ const NewsDetails = ({ item }: Props) => {
       if (favorite) {
         await removeFavorite(userId, item.id);
         setFavorite(false);
-        setMessage("Removed from favorites.");
+        setMessage(t.news.removed);
       } else {
         await addFavorite(userId, item);
         setFavorite(true);
-        setMessage("Saved to favorites.");
+        setMessage(t.news.saved);
       }
     } catch (error) {
       console.error("Failed to update favorites:", error);
-      setMessage("Failed to update favorites.");
+      setMessage(t.news.updateFailed);
     } finally {
       setIsLoadingFavorite(false);
     }
@@ -87,7 +89,7 @@ const NewsDetails = ({ item }: Props) => {
               href={item.url}
               className={styles.readMore}
             >
-              Read more
+              {t.news.readMore}
             </a>
           </p>
 
@@ -103,10 +105,10 @@ const NewsDetails = ({ item }: Props) => {
               className={styles.favoriteButton}
             >
               {isLoadingFavorite
-                ? "Saving..."
+                ? t.news.saving
                 : favorite
-                  ? "Remove from favorites"
-                  : "Save to favorites"}
+                  ? t.news.removeFromFavorites
+                  : t.news.saveToFavorites}
             </button>
 
             {message ? <p className={styles.message}>{message}</p> : null}
@@ -114,7 +116,7 @@ const NewsDetails = ({ item }: Props) => {
         </section>
 
         <section className={styles.summaryBlock}>
-          <h3 className={styles.summaryTitle}>Quick summary</h3>
+          <h3 className={styles.summaryTitle}>{t.news.quickSummary}</h3>
           <p className={styles.summaryText}>{shortSummary}</p>
 
           <ul className={styles.pointsList}>

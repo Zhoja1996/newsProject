@@ -8,11 +8,12 @@ import ProfilePage from "@/pages/profile/ui/Page";
 import FavoritesPage from "@/pages/favorites/ui/Page";
 import HistoryPage from "@/pages/history/ui/Page";
 import ProtectedRoute from "./providers/ProtectedRoute";
+import AppErrorFallback from "./ui/AppErrorFallback";
 
 export const appRouter = createBrowserRouter([
   {
     element: <BaseLayout />,
-    errorElement: <div>Error</div>,
+    errorElement: <AppErrorFallback />,
     children: [
       { path: "/", element: <MainPage /> },
       { path: "/news/:id", element: <NewsPage /> },

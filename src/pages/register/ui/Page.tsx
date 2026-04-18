@@ -1,11 +1,13 @@
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import { supabase } from "@/shared/api/supabaseClient";
 import styles from "./styles.module.css";
 
 const RegisterPage = () => {
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
@@ -74,17 +76,17 @@ const RegisterPage = () => {
     const trimmedEmail = email.trim();
 
     if (!trimmedNickname || !trimmedEmail || !password.trim()) {
-      setError("Please fill in all fields.");
+      setError(t.auth.fillAllFields);
       return;
     }
 
     if (trimmedNickname.length < 3) {
-      setError("Nickname must be at least 3 characters long.");
+      setError(t.auth.nicknameTooShort);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
+      setError(t.auth.passwordTooShort);
       return;
     }
 
@@ -94,7 +96,7 @@ const RegisterPage = () => {
       const isNicknameAvailable = await checkNicknameAvailability(trimmedNickname);
 
       if (!isNicknameAvailable) {
-        setError("This nickname is already taken.");
+        setError(t.auth.nicknameTaken);
         return;
       }
 
@@ -111,7 +113,7 @@ const RegisterPage = () => {
       const userId = data.user?.id;
 
       if (!userId) {
-        setError("Failed to create user profile.");
+        setError(t.auth.profileCreateFailed);
         return;
       }
 
@@ -123,7 +125,7 @@ const RegisterPage = () => {
 
       if (profileError) {
         if (profileError.message.toLowerCase().includes("duplicate")) {
-          setError("This nickname is already taken.");
+          setError(t.auth.nicknameTaken);
           setNicknameStatus("taken");
         } else {
           setError(profileError.message);
@@ -131,13 +133,13 @@ const RegisterPage = () => {
         return;
       }
 
-      setMessage("Registration successful. Check your email for confirmation.");
+      setMessage(t.auth.registerSuccess);
       setNickname("");
       setEmail("");
       setPassword("");
       setNicknameStatus("idle");
     } catch (err) {
-      setError("Unexpected error during registration.");
+      setError(t.auth.unexpectedRegister);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -147,13 +149,13 @@ const RegisterPage = () => {
   return (
     <main className={styles.wrapper}>
       <section className={`${styles.card} ${isDarkMode ? styles.dark : styles.light}`}>
-        <h1 className={styles.title}>Create account</h1>
+        <h1 className={styles.title}>{t.auth.registerTitle}</h1>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <input
               type="text"
-              placeholder="Nickname"
+              placeholder={t.auth.nickname}
               value={nickname}
               onChange={event => {
                 setNickname(event.target.value);
@@ -164,21 +166,21 @@ const RegisterPage = () => {
             />
 
             {nicknameStatus === "checking" && (
-              <p className={styles.infoText}>Checking nickname...</p>
+              <p className={styles.infoText}>{t.auth.checkingNickname}</p>
             )}
 
             {nicknameStatus === "available" && (
-              <p className={styles.success}>Nickname is available.</p>
+              <p className={styles.success}>{t.auth.nicknameAvailable}</p>
             )}
 
             {nicknameStatus === "taken" && (
-              <p className={styles.error}>This nickname is already taken.</p>
+              <p className={styles.error}>{t.auth.nicknameTaken}</p>
             )}
           </div>
 
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t.auth.email}
             value={email}
             onChange={event => setEmail(event.target.value)}
             className={styles.input}
@@ -186,7 +188,7 @@ const RegisterPage = () => {
 
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t.auth.password}
             value={password}
             onChange={event => setPassword(event.target.value)}
             className={styles.input}
@@ -197,7 +199,7 @@ const RegisterPage = () => {
             disabled={isLoading}
             className={styles.submitButton}
           >
-            {isLoading ? "Creating account..." : "Register"}
+            {isLoading ? t.auth.creatingAccount : t.auth.register}
           </button>
         </form>
 
@@ -205,9 +207,9 @@ const RegisterPage = () => {
         {error ? <p className={styles.error}>{error}</p> : null}
 
         <p className={styles.footerText}>
-          Already have an account?{" "}
+          {t.auth.haveAccount}{" "}
           <Link to="/login" className={styles.link}>
-            Log in
+            {t.header.login}
           </Link>
         </p>
       </section>

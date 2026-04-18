@@ -170,3 +170,36 @@
         font-size: 13px;
     }
 }
+
+.languageSwitch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid rgba(128, 128, 128, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.languageButton {
+    border: none;
+    background: transparent;
+    color: inherit;
+    padding: 6px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    opacity: 0.75;
+}
+
+.languageButton:hover {
+    opacity: 1;
+}
+
+.activeLanguage {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: white;
+    opacity: 1;
+}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import { supabase } from "@/shared/api/supabaseClient";
 import { getFavorites } from "@/shared/api/favoritesApi";
 import { getHistory } from "@/shared/api/historyApi";
@@ -51,6 +52,7 @@ const getViewedThisWeek = (history: Array<{ viewed_at?: string | null }>) => {
 const ProfilePage = () => {
   const { isDarkMode } = useTheme();
   const { session, isAuthLoading } = useAuth();
+  const { t } = useLanguage();
 
   const userId = session?.user?.id ?? null;
   const email = session?.user?.email ?? null;
@@ -156,12 +158,12 @@ const ProfilePage = () => {
     const trimmedNickname = draftNickname.trim();
 
     if (trimmedNickname.length < 3) {
-      setError("Nickname must be at least 3 characters long.");
+      setError(t.profile.nicknameTooShort);
       return;
     }
 
     if (!userId || !email) {
-      setError("User is not authenticated.");
+      setError(t.profile.userNotAuthenticated);
       return;
     }
 
@@ -185,10 +187,10 @@ const ProfilePage = () => {
       setNickname(trimmedNickname);
       setDraftNickname(trimmedNickname);
       setIsEditing(false);
-      setMessage("Nickname updated successfully.");
+      setMessage(t.profile.nicknameUpdated);
     } catch (saveError) {
       console.error("Failed to update nickname:", saveError);
-      setError("Failed to update nickname.");
+      setError(t.profile.updateFailed);
     } finally {
       setIsSavingNickname(false);
     }
@@ -199,7 +201,7 @@ const ProfilePage = () => {
   }, [nickname, email]);
 
   if (isAuthLoading || isPageLoading) {
-    return <PageLoader text="Loading profile..." />;
+    return <PageLoader text={t.profile.loading} />;
   }
 
   return (
@@ -209,21 +211,21 @@ const ProfilePage = () => {
           <div className={styles.avatar}>{avatarLetter}</div>
 
           <div className={styles.heroText}>
-            <p className={styles.overline}>Personal account</p>
-            <h1 className={styles.title}>Profile</h1>
-            <p className={styles.subtitle}>
-              Manage your saved news and track your reading activity.
-            </p>
+            <p className={styles.overline}>{t.profile.personalAccount}</p>
+            <h1 className={styles.title}>{t.profile.title}</h1>
+            <p className={styles.subtitle}>{t.profile.subtitle}</p>
           </div>
         </div>
 
         <div className={styles.infoBlock}>
-          <span className={styles.label}>Nickname</span>
+          <span className={styles.label}>{t.profile.nickname}</span>
 
           {!isEditing ? (
             <div className={styles.profileRow}>
               <div className={styles.emailBadge}>
-                <strong className={styles.email}>{nickname || "No nickname"}</strong>
+                <strong className={styles.email}>
+                  {nickname || t.profile.noNickname}
+                </strong>
               </div>
 
               <button
@@ -231,7 +233,7 @@ const ProfilePage = () => {
                 onClick={handleStartEdit}
                 className={styles.secondaryButton}
               >
-                Edit
+                {t.profile.edit}
               </button>
             </div>
           ) : (
@@ -241,7 +243,7 @@ const ProfilePage = () => {
                 value={draftNickname}
                 onChange={event => setDraftNickname(event.target.value)}
                 className={styles.nicknameInput}
-                placeholder="Enter nickname"
+                placeholder={t.profile.nickname}
               />
 
               <div className={styles.editActions}>
@@ -251,7 +253,7 @@ const ProfilePage = () => {
                   disabled={isSavingNickname}
                   className={styles.secondaryButton}
                 >
-                  {isSavingNickname ? "Saving..." : "Save"}
+                  {isSavingNickname ? t.news.saving : t.profile.save}
                 </button>
 
                 <button
@@ -259,7 +261,7 @@ const ProfilePage = () => {
                   onClick={handleCancelEdit}
                   className={styles.ghostButton}
                 >
-                  Cancel
+                  {t.profile.cancel}
                 </button>
               </div>
             </div>
@@ -270,7 +272,7 @@ const ProfilePage = () => {
         </div>
 
         <div className={styles.infoBlock}>
-          <span className={styles.label}>Signed in as</span>
+          <span className={styles.label}>{t.profile.signedInAs}</span>
           <div className={styles.emailBadge}>
             <strong className={styles.email}>{email}</strong>
           </div>
@@ -279,28 +281,28 @@ const ProfilePage = () => {
         <div className={styles.stats}>
           <div className={styles.statCard}>
             <span className={styles.statValue}>{favoritesCount}</span>
-            <span className={styles.statLabel}>Saved favorites</span>
+            <span className={styles.statLabel}>{t.profile.savedFavorites}</span>
           </div>
 
           <div className={styles.statCard}>
             <span className={styles.statValue}>{historyCount}</span>
-            <span className={styles.statLabel}>Viewed articles</span>
+            <span className={styles.statLabel}>{t.profile.viewedArticles}</span>
           </div>
 
           <div className={styles.statCard}>
             <span className={styles.statValue}>{viewedThisWeek}</span>
-            <span className={styles.statLabel}>Viewed this week</span>
+            <span className={styles.statLabel}>{t.profile.viewedThisWeek}</span>
           </div>
 
           <div className={styles.statCard}>
             <span className={styles.statValueSmall}>{topSource}</span>
-            <span className={styles.statLabel}>Top source</span>
+            <span className={styles.statLabel}>{t.profile.topSource}</span>
           </div>
         </div>
 
         <div className={styles.infoGrid}>
           <div className={styles.infoPanel}>
-            <span className={styles.infoPanelLabel}>Account created</span>
+            <span className={styles.infoPanelLabel}>{t.profile.accountCreated}</span>
             <strong className={styles.infoPanelValue}>{formatDate(createdAt)}</strong>
           </div>
         </div>
@@ -311,7 +313,7 @@ const ProfilePage = () => {
             onClick={handleLogout}
             className={styles.logoutButton}
           >
-            Logout
+            {t.header.logout}
           </button>
         </div>
       </section>

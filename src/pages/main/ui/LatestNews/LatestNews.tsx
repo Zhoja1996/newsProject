@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useGetLatestNewsQuery } from "@/entities/news/api/newsApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import EmptyState from "@/shared/ui/EmptyState/EmptyState";
@@ -9,6 +10,7 @@ type FeedMode = "latest" | "popular";
 
 const LatestNews = () => {
   const [mode, setMode] = useState<FeedMode>("latest");
+  const { t } = useLanguage();
   const { data, isLoading, isError } = useGetLatestNewsQuery("published_at");
   const navigateTo = useNavigateWithElement();
 
@@ -36,8 +38,8 @@ const LatestNews = () => {
     return (
       <aside className={styles.sidebar}>
         <ErrorState
-          title="Failed to load news"
-          description="Please try again later."
+          title={t.main.failedToLoad}
+          description={t.main.tryLater}
         />
       </aside>
     );
@@ -47,8 +49,8 @@ const LatestNews = () => {
     return (
       <aside className={styles.sidebar}>
         <EmptyState
-          title="No news available"
-          description="Please try again later."
+          title={t.main.noNews}
+          description={t.main.tryLater}
         />
       </aside>
     );
@@ -57,7 +59,7 @@ const LatestNews = () => {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
-        <h2 className={styles.title}>News feed</h2>
+        <h2 className={styles.title}>{t.main.newsFeed}</h2>
 
         <div className={styles.tabs}>
           <button
@@ -65,7 +67,7 @@ const LatestNews = () => {
             onClick={() => setMode("latest")}
             className={`${styles.tab} ${mode === "latest" ? styles.activeTab : ""}`}
           >
-            Latest
+            {t.main.latest}
           </button>
 
           <button
@@ -73,7 +75,7 @@ const LatestNews = () => {
             onClick={() => setMode("popular")}
             className={`${styles.tab} ${mode === "popular" ? styles.activeTab : ""}`}
           >
-            Popular
+            {t.main.popular}
           </button>
         </div>
       </div>
@@ -106,8 +108,8 @@ const LatestNews = () => {
               <h3 className={styles.itemTitle}>{item.title}</h3>
 
               <div className={styles.meta}>
-                <span>{item.publishedAt || "Recently"}</span>
-                <span>{item.source || "Unknown source"}</span>
+              <span>{item.publishedAt || t.main.recently}</span>
+              <span>{item.source || t.main.unknownSource}</span>
               </div>
             </div>
           </article>

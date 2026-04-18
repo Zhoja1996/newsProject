@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAppSelector } from "@/app/appStore";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import { NewsDetails } from "@/entities/news";
 import type { INews } from "@/entities/news";
 import { useGetNewsQuery } from "@/entities/news/api/newsApi";
@@ -15,6 +16,7 @@ const STOP_WORDS = new Set([
 
 const NewsPage = () => {
   const { id } = useParams();
+  const { t } = useLanguage();
   const currentNewsFromStore = useAppSelector(state => state.news.currentNews);
   const navigateTo = useNavigateWithElement();
 
@@ -99,9 +101,9 @@ const NewsPage = () => {
   if (!currentNews) {
     return (
       <div>
-        <h1>Cannot find news</h1>
+        <h1>{t.news.cannotFind}</h1>
         <Link to="/">
-          <h3 className={styles.title}>Go to main page</h3>
+          <h3 className={styles.title}>{t.news.goHome}</h3>
         </Link>
       </div>
     );
@@ -115,14 +117,14 @@ const NewsPage = () => {
 
       <section className={styles.similarSection}>
         <div className={styles.similarHeader}>
-          <h2 className={styles.similarTitle}>Similar news</h2>
+          <h2 className={styles.similarTitle}>{t.news.similarNews}</h2>
           <p className={styles.similarSubtitle}>
-            Related articles you may want to open next
+            {t.news.relatedArticles}
           </p>
         </div>
 
         {similarNews.length === 0 && !isLoading ? (
-          <p className={styles.emptyText}>No similar news found.</p>
+          <p className={styles.emptyText}>{t.news.noSimilar}</p>
         ) : (
           <NewsList
             news={similarNews}

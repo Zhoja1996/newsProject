@@ -1,12 +1,14 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import { supabase } from "@/shared/api/supabaseClient";
 import styles from "./styles.module.css";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +23,7 @@ const LoginPage = () => {
     setError("");
 
     if (!email.trim() || !password.trim()) {
-      setError("Please fill in all fields.");
+      setError(t.auth.fillAllFields);
       return;
     }
 
@@ -38,13 +40,13 @@ const LoginPage = () => {
         return;
       }
 
-      setMessage("Login successful.");
+      setMessage(t.auth.loginSuccess);
       setEmail("");
       setPassword("");
 
       navigate("/");
     } catch (err) {
-      setError("Unexpected error during login.");
+      setError(t.auth.unexpectedLogin);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -54,12 +56,12 @@ const LoginPage = () => {
   return (
     <main className={styles.wrapper}>
       <section className={`${styles.card} ${isDarkMode ? styles.dark : styles.light}`}>
-        <h1 className={styles.title}>Log in</h1>
+        <h1 className={styles.title}>{t.auth.loginTitle}</h1>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t.auth.email}
             value={email}
             onChange={event => setEmail(event.target.value)}
             className={styles.input}
@@ -67,7 +69,7 @@ const LoginPage = () => {
 
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t.auth.password}
             value={password}
             onChange={event => setPassword(event.target.value)}
             className={styles.input}
@@ -78,7 +80,7 @@ const LoginPage = () => {
             disabled={isLoading}
             className={styles.submitButton}
           >
-            {isLoading ? "Logging in..." : "Log in"}
+            {isLoading ? t.auth.loggingIn : t.header.login}
           </button>
         </form>
 
@@ -86,9 +88,9 @@ const LoginPage = () => {
         {error ? <p className={styles.error}>{error}</p> : null}
 
         <p className={styles.footerText}>
-          Don&apos;t have an account?{" "}
+          {t.auth.noAccount}{" "}
           <Link to="/register" className={styles.link}>
-            Register
+            {t.header.register}
           </Link>
         </p>
       </section>

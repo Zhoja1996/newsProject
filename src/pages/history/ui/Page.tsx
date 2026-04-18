@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import { getHistory, removeFromHistory } from "@/shared/api/historyApi";
 import { useNavigateWithElement } from "@/shared/hooks/useNavigate";
 import { INews, NewsCard } from "@/entities/news";
@@ -12,6 +13,7 @@ import styles from "./styles.module.css";
 const HistoryPage = () => {
   const { isDarkMode } = useTheme();
   const { session } = useAuth();
+  const { t } = useLanguage();
   const navigateTo = useNavigateWithElement();
 
   const userId = session?.user?.id ?? null;
@@ -75,23 +77,23 @@ const HistoryPage = () => {
   };
 
   if (isLoading) {
-    return <PageLoader text="Loading history..." />;
+    return <PageLoader text={t.history.loading} />;
   }
 
   return (
     <main className={styles.wrapper}>
       <section className={`${styles.card} ${isDarkMode ? styles.dark : styles.light}`}>
-        <h1 className={styles.title}>History</h1>
+        <h1 className={styles.title}>{t.history.title}</h1>
 
         {isError ? (
           <ErrorState
-            title="Failed to load history"
-            description="Please try again later."
+            title={t.history.errorTitle}
+            description={t.history.errorDescription}
           />
         ) : history.length === 0 && !isHistoryLoading ? (
           <EmptyState
-            title="No viewed news yet"
-            description="Open a few articles and they will appear here."
+            title={t.history.emptyTitle}
+            description={t.history.emptyDescription}
           />
         ) : (
           <ul className={styles.list}>
@@ -103,7 +105,7 @@ const HistoryPage = () => {
                   onClick={event => handleRemove(event, news.id)}
                   className={styles.removeButton}
                 >
-                  Remove
+                  {t.history.remove}
                 </button>
               </li>
             ))}
