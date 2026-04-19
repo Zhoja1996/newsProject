@@ -6,17 +6,6 @@
     box-sizing: border-box;
 }
 
-button,
-input,
-select,
-textarea {
-    font: inherit;
-}
-
-button {
-    color: inherit;
-}
-
 .container {
     padding: 24px;
     min-height: 100vh;
@@ -27,13 +16,23 @@ button {
 }
 
 .app.light {
-    color: black;
+    color: #111;
 }
 
 .app.dark .container {
-    background-color: #23272f;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 8% 14%, rgba(124, 108, 255, 0.18), transparent 22%),
+        radial-gradient(circle at 36% 42%, rgba(86, 96, 255, 0.10), transparent 24%),
+        radial-gradient(circle at 82% 76%, rgba(59, 130, 246, 0.10), transparent 24%),
+        linear-gradient(115deg, rgba(255, 255, 255, 0.03) 0%, transparent 22%, rgba(255, 255, 255, 0.02) 48%, transparent 72%),
+        linear-gradient(180deg, #1f2430 0%, #1b2230 46%, #18202d 100%);
+    background-attachment: fixed;
 }
 
 .app.light .container {
-    background-color: white;
+    background:
+        radial-gradient(circle at 10% 14%, rgba(124, 108, 255, 0.08), transparent 20%),
+        radial-gradient(circle at 84% 78%, rgba(59, 130, 246, 0.06), transparent 22%),
+        linear-gradient(180deg, #f8f9fc 0%, #f4f6fb 100%);
 }
