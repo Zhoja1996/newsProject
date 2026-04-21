@@ -28,9 +28,13 @@ const Header = () => {
   return (
     <header className={`${styles.header} ${isDarkMode ? styles.dark : styles.light}`}>
       <div className={styles.left}>
-        <Link to="/" className={styles.logoLink}>
-          <h1 className={styles.title}>NEWS REACTIFY</h1>
-        </Link>
+      <Link to="/" className={styles.logoLink}>
+        <h1 className={styles.title}>
+          <span className={styles.logoText}>
+            News<span className={styles.logoAccent}>Flow</span>
+          </span>
+        </h1>
+      </Link>
 
         <p className={styles.date}>{formatDate(new Date(), language)}</p>
       </div>
