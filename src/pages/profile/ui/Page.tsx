@@ -7,6 +7,7 @@ import { getFavorites } from "@/shared/api/favoritesApi";
 import { getHistory } from "@/shared/api/historyApi";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader";
 import styles from "./styles.module.css";
+import { useNavigate } from "react-router-dom";
 
 const formatDate = (value: string | null) => {
   if (!value) {
@@ -50,6 +51,7 @@ const getViewedThisWeek = (history: Array<{ viewed_at?: string | null }>) => {
 };
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const { isDarkMode } = useTheme();
   const { session, isAuthLoading } = useAuth();
   const { t } = useLanguage();
@@ -131,7 +133,7 @@ const ProfilePage = () => {
     try {
       await supabase.auth.signOut({ scope: "local" });
       localStorage.removeItem("nickname");
-      window.location.href = "/login";
+      navigate("/login");
     } catch (logoutError) {
       console.error("Failed to logout:", logoutError);
     }
