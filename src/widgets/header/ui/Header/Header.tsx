@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { useLanguage } from "@/app/providers/LanguageProvider";
@@ -8,6 +8,7 @@ import { supabase } from "@/shared/api/supabaseClient";
 import styles from "./styles.module.css";
 
 const Header = () => {
+  const navigate = useNavigate();
   const { isDarkMode } = useTheme();
   const { session, isAuthLoading } = useAuth();
   const { language, setLanguage, t } = useLanguage();
@@ -19,7 +20,7 @@ const Header = () => {
     try {
       await supabase.auth.signOut({ scope: "local" });
       localStorage.removeItem("nickname");
-      window.location.href = "/login";
+      navigate("/login");
     } catch (logoutError) {
       console.error("Failed to logout:", logoutError);
     }
@@ -29,12 +30,12 @@ const Header = () => {
     <header className={`${styles.header} ${isDarkMode ? styles.dark : styles.light}`}>
       <div className={styles.left}>
       <Link to="/" className={styles.logoLink}>
-        <h1 className={styles.title}>
-          <span className={styles.logoText}>
-            News<span className={styles.logoAccent}>Flow</span>
-          </span>
-        </h1>
-      </Link>
+          <h1 className={styles.title}>
+            <span className={styles.logoText}>
+              News<span className={styles.logoAccent}>Flow</span>
+            </span>
+          </h1>
+        </Link>
 
         <p className={styles.date}>{formatDate(new Date(), language)}</p>
       </div>
