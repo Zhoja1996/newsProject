@@ -16,7 +16,10 @@ const NewsList = ({ news, type = "item", onItemClick }: Props) => {
         return (
           <NewsCard
             key={item.id}
-            item={item}
+            item={{
+              ...item,
+              image: item.image || "/placeholder.png", // если нет картинки — используем заглушку
+            }}
             type={type}
             onClick={onItemClick}
           />

@@ -9,6 +9,9 @@ interface Props {
   onClick?: (news: INews) => void;
 }
 
+// Путь к заглушке — положи этот файл в public
+const placeholder = "/placeholder.jpg";
+
 const NewsCard = ({ item, type = "item", onClick }: Props) => {
   return (
     <li
@@ -19,13 +22,13 @@ const NewsCard = ({ item, type = "item", onClick }: Props) => {
     >
       {type === "banner" ? (
         <div className={styles.bannerImage}>
-          <Image image={item.image} />
+          <Image image={item.image || placeholder} />
         </div>
       ) : (
         <div
           className={styles.wrapper}
           style={{
-            backgroundImage: item.image ? `url(${item.image})` : "none",
+            backgroundImage: `url(${item.image || placeholder})`,
           }}
         />
       )}

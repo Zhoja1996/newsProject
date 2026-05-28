@@ -11,7 +11,7 @@ export type NewsItem = {
   url: string;
 };
 
-export type NewsResponse = {
+export type NewsApiResponse = {
   news: NewsItem[];
   meta: {
     found: number;
@@ -19,7 +19,9 @@ export type NewsResponse = {
     limit: number;
     page: number;
   };
+  nextPage?: string | null; // <-- добавлено для корректной пагинации
 };
+
 
 type GetTopNewsParams = {
   page?: number;
@@ -38,7 +40,7 @@ type SearchNewsParams = {
 };
 
 export async function getTopNews(params: GetTopNewsParams = {}) {
-  const response = await axios.get<NewsResponse>('/api/news/top', {
+  const response = await axios.get<NewsApiResponse>('/api/news/top', {
     params,
   });
 
@@ -46,7 +48,7 @@ export async function getTopNews(params: GetTopNewsParams = {}) {
 }
 
 export async function searchNews(params: SearchNewsParams) {
-  const response = await axios.get<NewsResponse>('/api/news/search', {
+  const response = await axios.get<NewsApiResponse>('/api/news/search', {
     params,
   });
 

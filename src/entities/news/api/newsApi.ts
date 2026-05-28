@@ -8,63 +8,54 @@ export const newsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "/api/news/" }),
   endpoints: builder => ({
     getNews: builder.query<NewsApiResponse, ParamsType>({
-      keepUnusedDataFor: 0,
-      query: params => {
-        const {
-          page_number = 1,
-          page_size = 10,
-          category,
-          keywords,
-        } = params || {};
+      query: ({ page_number, page_size = 10, category, keywords, nextPageToken }) => {
+        const params: Record<string, any> = {
+          limit: page_size > 10 ? 10 : page_size, // Ограничение free плана
+        };
 
         if (keywords?.trim()) {
-          return {
-            url: "search",
-            params: {
-              q: keywords,
-              page: page_number,
-              limit: page_size,
-              locale: "us",
-              language: "en",
-            },
-          };
+          params.q = keywords;
+        } else {
+          params.category = category || "general";
+        }
+
+        // передаём токен следующей страницы, если он есть
+        if (nextPageToken) {
+          params.nextPage = nextPageToken;
+        } else {
+          params.page = page_number || 1;
         }
 
         return {
-          url: "top",
-          params: {
-            page: page_number,
-            limit: page_size,
-            category: category || "general",
-            locale: "us",
-            language: "en",
-          },
+          url: keywords ? "search" : "top",
+          params,
         };
       },
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const result = await queryFulfilled;
-          const data = result.data;
-
-          dispatch(setNews(data.news));
+          dispatch(setNews(result.data.news));
         } catch (error) {
           console.error("Failed to fetch news:", error);
         }
       },
     }),
+    getLatestNews: builder.query<NewsApiResponse, { category?: string; limit?: number; nextPageToken?: string }>({
+      query: ({ category = "general", limit = 10, nextPageToken }) => {
+        const params: Record<string, any> = {
+          limit: limit > 10 ? 10 : limit,
+          category,
+        };
 
-    getLatestNews: builder.query<NewsApiResponse, string>({
-      query: (sortBy = "published_at") => ({
-        url: "top",
-        params: {
-          page: 1,
-          limit: 10,
-          category: "general",
-          locale: "us",
-          language: "en",
-          sort: sortBy,
-        },
-      }),
+        if (nextPageToken) {
+          params.nextPage = nextPageToken;
+        }
+
+        return {
+          url: "top",
+          params,
+        };
+      },
     }),
   }),
 });

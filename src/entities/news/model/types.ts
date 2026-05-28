@@ -19,4 +19,5 @@ export interface NewsApiResponse {
     limit: number;
     page: number;
   };
+  nextPage?: string | null; // <-- добавлено для поддержки пагинации
 }

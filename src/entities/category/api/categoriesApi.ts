@@ -3,7 +3,6 @@ import type { CategoriesApiResponse, CategoriesType } from "../model/types";
 
 const CATEGORIES: CategoriesType[] = [
   "general",
-  "world",
   "politics",
   "business",
   "technology",
@@ -11,7 +10,6 @@ const CATEGORIES: CategoriesType[] = [
   "sports",
   "entertainment",
   "health",
-  "finance",
   "food",
   "travel",
 ];

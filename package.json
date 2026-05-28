@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:vercel": "THENEWSAPI_KEY=ifyGNYyDhXw9Y3LgJYAE7m0LUZbg2LRnnqdkURli vercel dev"
+    "dev:vercel": "THENEWSAPI_KEY=ifyGNYyDhXw9Y3LgJYAE7m0LUZbg2LRnnqdkURli NEWSDATA_API_KEY=pub_b4efe6543fc54617a430240d2972383d vercel dev"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",

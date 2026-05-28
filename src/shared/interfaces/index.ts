@@ -8,6 +8,7 @@ export interface IFilters {
   page_size: number;
   category: CategoriesType | null;
   keywords: string;
+  nextPageToken?: string;
 }
 
 export type ParamsType = Partial<IFilters>;
